@@ -2,12 +2,19 @@ struct Solution {}
 
 impl Solution {
     pub fn rotate(nums: &mut Vec<i32>, k: i32) {
-        for _ in 0..k {
-            let last = nums[nums.len() - 1];
-            for i in (1..nums.len()).rev() {
-                nums[i] = nums[i - 1];
-            }
-            nums[0] = last;
+        let k = k % nums.len() as i32;
+        let len = nums.len();
+        let mut clone = nums.clone();
+        let (new_end_block, new_start_block) = clone.split_at_mut(len - k as usize);
+
+        let mut idx = 0;
+        for v in new_start_block {
+            nums[idx] = *v;
+            idx += 1;
+        }
+        for v in new_end_block {
+            nums[idx] = *v;
+            idx += 1;
         }
     }
 }
