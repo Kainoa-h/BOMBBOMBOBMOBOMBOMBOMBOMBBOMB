@@ -2,25 +2,18 @@ struct Solution {}
 
 impl Solution {
     pub fn merge(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>, n: i32) {
-        let total_len = (m + n) as usize;
-        let mut n1 = nums1.clone();
-        n1.resize(m as usize, 0_i32);
-        let mut n1_iter = n1.iter().peekable();
-        let mut n2_iter = nums2.iter().peekable();
-        for i in 0..total_len {
-            if n1_iter.peek().is_none() {
-                nums1[i] = *n2_iter.next().unwrap();
-                continue;
-            }
-            if n2_iter.peek().is_none() {
-                nums1[i] = *n1_iter.next().unwrap();
-                continue;
-            }
-            nums1[i] = if n1_iter.peek().unwrap() < n2_iter.peek().unwrap() {
-                *n1_iter.next().unwrap()
+        let mut n1_idx = m - 1;
+        let mut n2_idx = n - 1;
+        let mut merge_idx = m + n - 1;
+        while n2_idx >= 0 {
+            if n1_idx >= 0 && nums1[n1_idx as usize] > nums2[n2_idx as usize] {
+                nums1[merge_idx as usize] = nums1[n1_idx as usize];
+                n1_idx -= 1;
             } else {
-                *n2_iter.next().unwrap()
-            };
+                nums1[merge_idx as usize] = nums2[n2_idx as usize];
+                n2_idx -= 1;
+            }
+            merge_idx -= 1;
         }
     }
 }
