@@ -2,21 +2,18 @@ struct Solution {}
 
 impl Solution {
     pub fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
-        let mut real_idx = 1;
-        let mut prev_num = nums[0];
-        let mut seen_count: i8 = 1;
-        for i in 1..nums.len() {
+        if nums.len() < 3 {
+            return nums.len() as i32;
+        }
+
+        let mut real_idx = 2;
+        for i in 2..nums.len() {
+            let before_real_current_num = nums[real_idx - 2];
             let curr_num = nums[i];
-            if curr_num != prev_num {
-                nums[real_idx] = curr_num;
-                real_idx += 1;
-                prev_num = curr_num;
-                seen_count = 0;
-            } else if seen_count == 1 {
+            if curr_num != before_real_current_num {
                 nums[real_idx] = curr_num;
                 real_idx += 1;
             }
-            seen_count += 1;
         }
         real_idx as i32
     }
