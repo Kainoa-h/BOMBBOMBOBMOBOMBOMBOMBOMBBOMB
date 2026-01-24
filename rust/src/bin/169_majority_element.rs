@@ -1,19 +1,20 @@
-use std::collections::HashMap;
-
 struct Solution {}
 
 impl Solution {
     pub fn majority_element(nums: Vec<i32>) -> i32 {
-        let mut map: HashMap<i32, i32> = HashMap::new();
-        let limit = (nums.len() / 2) as i32;
-        for n in nums {
-            let r = map.entry(n).or_insert(0);
-            *r += 1;
-            if *r > limit {
-                return n;
+        let mut candidate = nums[0];
+        let mut strength = 1;
+        for n in nums.iter().skip(1) {
+            if strength == 0 {
+                candidate = *n;
+                strength = 1;
+            } else if candidate == *n {
+                strength += 1;
+            } else {
+                strength -= 1;
             }
         }
-        -1
+        candidate
     }
 }
 
