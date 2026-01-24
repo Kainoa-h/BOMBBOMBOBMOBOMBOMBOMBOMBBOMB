@@ -2,13 +2,13 @@ struct Solution {}
 
 impl Solution {
     pub fn majority_element(nums: Vec<i32>) -> i32 {
-        let mut candidate = nums[0];
-        let mut strength = 1;
-        for n in nums.iter().skip(1) {
+        let mut candidate = 0;
+        let mut strength = 0;
+        for n in nums {
             if strength == 0 {
-                candidate = *n;
-                strength = 1;
-            } else if candidate == *n {
+                candidate = n;
+            }
+            if candidate == n {
                 strength += 1;
             } else {
                 strength -= 1;
