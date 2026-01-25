@@ -2,21 +2,17 @@ struct Solution {}
 
 impl Solution {
     pub fn jump(nums: Vec<i32>) -> i32 {
-        if nums.len() == 1 {
-            return 0;
-        }
-
         let mut max_reachable = 0;
         let mut current_range = 0;
         let mut jumps = 0;
-        for (i, &n) in nums.iter().enumerate() {
+        for (i, &n) in nums.iter().take(nums.len().saturating_sub(1)).enumerate() {
             max_reachable = max_reachable.max(i + n as usize);
             if i == current_range {
                 jumps += 1;
                 current_range = max_reachable;
-            }
-            if current_range + 1 >= nums.len() {
-                return jumps;
+                if current_range + 1 >= nums.len() {
+                    return jumps;
+                }
             }
         }
         jumps
