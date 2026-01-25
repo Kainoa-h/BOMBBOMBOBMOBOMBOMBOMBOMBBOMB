@@ -3,23 +3,15 @@ use std::cmp::Reverse;
 struct Solution {}
 
 impl Solution {
-    pub fn h_index(citations: Vec<i32>) -> i32 {
-        let mut citations = citations.clone();
-        citations.sort_by_key(|x| Reverse(*x));
-        let mut seen = 0;
-        for &c in &citations {
-            if c < 1 {
-                break;
-            }
-            seen += 1;
-            if c > seen && citations.get(seen as usize).copied().unwrap_or(0) < seen {
-                return seen;
-            }
-            if c <= seen {
-                return c;
-            }
-        }
-        seen
+    // After sorting desc
+    // The idx + 1 tells us at least how many papers have (idx + 1) citations
+    pub fn h_index(mut citations: Vec<i32>) -> i32 {
+        citations.sort_unstable_by_key(|x| Reverse(*x));
+        citations
+            .iter()
+            .enumerate()
+            .take_while(|(idx, count)| **count as usize > *idx)
+            .count() as i32
     }
 }
 
