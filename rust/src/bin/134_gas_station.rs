@@ -1,26 +1,24 @@
 struct Solution {}
 impl Solution {
     pub fn can_complete_circuit(gas: Vec<i32>, cost: Vec<i32>) -> i32 {
-        // can reuse gas vec but this is easier
-        let mut evs: Vec<i32> = Vec::with_capacity(gas.len());
-        let mut ev_sum = 0;
-        let mut largest_ev = (0, 0);
-        for i in 1..gas.len() {
-            let ev = gas[i] - cost[i - 1];
-            ev_sum += ev;
-            evs.push(ev);
-            if ev > largest_ev.1 {
-                largest_ev = (i - 1, ev);
+        let mut total_excess_fuel = 0;
+        let mut start_idx = 0;
+        let mut fuel_tank = 0;
+        for i in 0..gas.len() {
+            let spent = gas[i] - cost[i];
+            total_excess_fuel += spent;
+            fuel_tank += spent;
+            if fuel_tank < 0 {
+                fuel_tank = 0;
+                start_idx = i + 1;
             }
         }
-        let ev = gas[0] - cost.last().unwrap();
-        ev_sum += ev;
-        evs.push(ev);
-        if ev > largest_ev.1 {
-            largest_ev = (cost.len() - 1, ev);
-        }
 
-        if ev_sum < 0 { -1 } else { largest_ev.0 as i32 }
+        if total_excess_fuel < 0 {
+            -1
+        } else {
+            start_idx as i32
+        }
     }
 }
 
