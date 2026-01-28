@@ -8,13 +8,13 @@ impl Solution {
 
         let mut candies: Vec<i32> = vec![1; ratings.len()];
         for i in 1..ratings.len() {
-            if ratings[i] > ratings[i - 1] && candies[i] <= candies[i - 1] {
+            if ratings[i] > ratings[i - 1] {
                 candies[i] = candies[i - 1] + 1;
             }
         }
         for i in (0..ratings.len()).rev().skip(1) {
-            if ratings[i] > ratings[i + 1] && candies[i] <= candies[i + 1] {
-                candies[i] = candies[i + 1] + 1;
+            if ratings[i] > ratings[i + 1] {
+                candies[i] = candies[i].max(candies[i + 1] + 1);
             }
         }
 
