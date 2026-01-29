@@ -1,44 +1,19 @@
 struct Solution {}
 impl Solution {
     pub fn int_to_roman(mut num: i32) -> String {
-        let mut maps = [
-            |n| match n {
-                1..=3 => "I".repeat(n),
-                4 => "IV".to_owned(),
-                5..=8 => format!("V{}", "I".repeat(n - 5)),
-                9 => "IX".to_owned(),
-                _ => "".to_owned(),
-            },
-            |n| match n {
-                1..=3 => "X".repeat(n),
-                4 => "XL".to_owned(),
-                5..=8 => format!("L{}", "X".repeat(n - 5)),
-                9 => "XC".to_owned(),
-                _ => "".to_owned(),
-            },
-            |n| match n {
-                1..=3 => "C".repeat(n),
-                4 => "CD".to_owned(),
-                5..=8 => format!("D{}", "C".repeat(n - 5)),
-                9 => "CM".to_owned(),
-                _ => "".to_owned(),
-            },
-            |n| match n {
-                1..=3 => "M".repeat(n),
-                _ => "".to_owned(),
-            },
-        ]
-        .iter();
-
-        let mut current_map;
-        let mut units: Vec<String> = Vec::new();
-        while num > 0 {
-            current_map = maps.next().unwrap();
-            let x = num % 10;
-            units.push(current_map(x as usize));
-            num = (num - x) / 10;
+        let mut result = String::new();
+        let roman = [
+            "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I",
+        ];
+        let nums = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+        for i in 0..roman.len() {
+            while num >= nums[i] {
+                num -= nums[i];
+                result.push_str(roman[i]);
+            }
         }
-        units.into_iter().rev().collect()
+
+        result
     }
 }
 
