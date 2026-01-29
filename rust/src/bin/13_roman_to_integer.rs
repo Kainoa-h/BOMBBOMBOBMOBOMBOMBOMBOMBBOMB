@@ -14,7 +14,7 @@ impl Solution {
 
         let mut total = 0;
         let mut prev = 0;
-        for (_, c) in s.char_indices() {
+        for c in s.chars() {
             let x = map(c);
             total += x;
             if prev < x {
