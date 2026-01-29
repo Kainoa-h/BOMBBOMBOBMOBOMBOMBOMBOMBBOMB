@@ -1,16 +1,7 @@
 struct Solution {}
 impl Solution {
     pub fn length_of_last_word(s: String) -> i32 {
-        let mut count = 0;
-        for c in s.chars().rev() {
-            if c == ' ' && count > 0 {
-                break;
-            }
-            if c != ' ' {
-                count += 1;
-            }
-        }
-        count
+        s.trim_end().chars().rev().take_while(|&c| c != ' ').count() as i32
     }
 }
 
