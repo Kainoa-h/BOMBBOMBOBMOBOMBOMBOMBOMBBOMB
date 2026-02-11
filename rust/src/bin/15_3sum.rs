@@ -1,30 +1,31 @@
-use std::collections::HashSet;
-
 struct Solution {}
+
 impl Solution {
     pub fn three_sum(mut nums: Vec<i32>) -> Vec<Vec<i32>> {
         let mut ans: Vec<Vec<i32>> = Vec::new();
-        let mut set: HashSet<Vec<i32>> = HashSet::new();
         nums.sort_unstable();
-        for f in 1..nums.len() - 1 {
-            let mut l = 0;
+        for f in 0..nums.len() - 2 {
+            let mut l = f + 1;
             let mut r = nums.len() - 1;
+            if f > 0 && nums[f] == nums[f - 1] {
+                continue;
+            }
             while l < r {
-                let sum = nums[l] + nums[f] + nums[r];
+                let sum = nums[f] + nums[l] + nums[r];
                 if sum == 0 {
-                    let x = vec![nums[l], nums[f], nums[r]];
-                    if set.insert(&x) {
-                        ans.push(x);
+                    let x = vec![nums[f], nums[l], nums[r]];
+                    ans.push(x);
+                    l += 1;
+                    while l < r && nums[l] == nums[l - 1] {
+                        l += 1;
                     }
-                    break;
+                    continue;
                 }
+
                 if sum < 0 {
                     l += 1;
                 } else {
                     r -= 1;
-                }
-                if l == f || r == f {
-                    break;
                 }
             }
         }
