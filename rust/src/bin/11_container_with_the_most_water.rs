@@ -8,9 +8,7 @@ impl Solution {
             let left = height[l];
             let right = height[r];
             let vol = left.min(right) * (r - l) as i32;
-            if vol > largest {
-                largest = vol;
-            }
+            largest = largest.max(vol);
             if left < right {
                 l += 1;
             } else {
