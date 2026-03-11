@@ -4,8 +4,14 @@ impl Solution {
         if n == 0 {
             return 1;
         }
+        let mut mask = n;
+        mask |= mask >> 1;
+        mask |= mask >> 2;
+        mask |= mask >> 4;
+        mask |= mask >> 8;
+        mask |= mask >> 16;
 
-        n ^ ((u32::MAX) >> n.leading_zeros()) as i32
+        n ^ mask
     }
 }
 
