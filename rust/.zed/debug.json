@@ -1,0 +1,11 @@
+[
+  {
+    "label": "Debug Current Binary",
+    "adapter": "CodeLLDB",
+    "request": "launch",
+    "program": "${ZED_WORKTREE_ROOT}/target/debug/${ZED_STEM}",
+    "args": [],
+    "cwd": "${ZED_WORKTREE_ROOT}",
+    "stopOnEntry": false
+  }
+]

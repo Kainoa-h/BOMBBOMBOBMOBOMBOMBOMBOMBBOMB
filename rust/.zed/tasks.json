@@ -1,0 +1,12 @@
+[
+  {
+    "label": "cargo build",
+    "command": "cargo",
+    "args": [
+      "build",
+      "--bin",
+      "${ZED_STEM}"
+    ],
+    "cwd": "${ZED_WORKTREE_ROOT}"
+  }
+]
