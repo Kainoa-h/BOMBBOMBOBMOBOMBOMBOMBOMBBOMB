@@ -14,19 +14,19 @@ impl Solution {
         for row in grid {
             let mut row_sum = 0;
             let mut row_has_x = false;
-            for (c_idx, &char) in row.iter().enumerate() {
-                row_sum += match char {
+            for (c_idx, node) in prefix_row.iter_mut().enumerate() {
+                row_sum += match row[c_idx] {
                     'X' => 1,
                     'Y' => -1,
                     _ => 0,
                 };
-                if char == 'X' {
+                if row[c_idx] == 'X' {
                     row_has_x = true;
                 }
 
-                let sum = prefix_row[c_idx].sum + row_sum;
-                let has_x = prefix_row[c_idx].has_x || row_has_x;
-                prefix_row[c_idx] = Node { sum, has_x };
+                let sum = node.sum + row_sum;
+                let has_x = node.has_x || row_has_x;
+                *node = Node { sum, has_x };
 
                 if sum == 0 && has_x {
                     count += 1;
