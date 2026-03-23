@@ -1,60 +1,30 @@
 struct Solution {}
 impl Solution {
-    pub fn spiral_order(matrix: Vec<Vec<i32>>) -> Vec<i32> {
+    pub fn spiral_order(mut matrix: Vec<Vec<i32>>) -> Vec<i32> {
+        let mut result: Vec<i32> = Vec::new();
         let rows = matrix.len();
         let cols = matrix[0].len();
-
-        let mut cells = rows * cols;
-        let mut result: Vec<i32> = Vec::new();
-        let mut row_idx = 0_usize;
-        let mut col_idx = 0_usize;
-        let (mut buffer_right, mut buffer_bot, mut buffer_left, mut buffer_top) =
-            (0_usize, 0_usize, 0_usize, 1_usize);
-        while cells > 0 {
-            // right
-            for i in (col_idx)..(cols - buffer_right) {
-                result.push(matrix[row_idx][i]);
-                cells -= 1;
+        let (mut row_idx, mut col_idx) = (0_usize, 0_usize);
+        let (mut vel_r, mut vel_c) = (0_isize, 1_isize);
+        result.push(matrix[0][0]);
+        matrix[0][0] = 101;
+        for _ in 1..(rows * cols) {
+            let (maybe_row_idx, maybe_col_idx) =
+                (row_idx as isize + vel_r, col_idx as isize + vel_c);
+            if 0 > maybe_row_idx
+                || (rows as isize) <= maybe_row_idx
+                || 0 > maybe_col_idx
+                || (cols as isize) <= maybe_col_idx
+                || matrix[maybe_row_idx as usize][maybe_col_idx as usize] == 101
+            {
+                (vel_r, vel_c) = (vel_c, -vel_r);
             }
-            if cells == 0 {
-                break;
-            }
-            col_idx = cols - buffer_right - 1;
-            buffer_right += 1;
-
-            // down
-            for i in (row_idx + 1)..(rows - buffer_bot) {
-                result.push(matrix[i][col_idx]);
-                cells -= 1;
-            }
-            if cells == 0 {
-                break;
-            }
-            row_idx = rows - buffer_bot - 1;
-            buffer_bot += 1;
-
-            // left
-            for i in (buffer_left..col_idx).rev() {
-                result.push(matrix[row_idx][i]);
-                cells -= 1;
-            }
-            if cells == 0 {
-                break;
-            }
-            col_idx = buffer_left;
-            buffer_left += 1;
-
-            // up
-            for i in (buffer_top..row_idx).rev() {
-                result.push(matrix[i][col_idx]);
-                cells -= 1;
-            }
-            if cells == 0 {
-                break;
-            }
-            row_idx = buffer_top;
-            buffer_top += 1;
-            col_idx += 1;
+            (row_idx, col_idx) = (
+                row_idx.checked_add_signed(vel_r).unwrap(),
+                col_idx.checked_add_signed(vel_c).unwrap(),
+            );
+            result.push(matrix[row_idx][col_idx]);
+            matrix[row_idx][col_idx] = 101;
         }
 
         result
