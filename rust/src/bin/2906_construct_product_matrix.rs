@@ -1,9 +1,7 @@
 struct Solution {}
 impl Solution {
     pub fn construct_product_matrix(grid: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
-        let row_count = grid.len();
         let col_count = grid[0].len();
-        let mut result_grid: Vec<Vec<i32>> = vec![vec![0; col_count]; row_count];
 
         let prefix_list: Vec<u64> = grid
             .iter()
@@ -28,12 +26,16 @@ impl Solution {
         postfix_list.reverse();
         let postfix_list = postfix_list;
 
-        for (idx, cell) in result_grid.iter_mut().flatten().enumerate() {
-            let prod = prefix_list[idx] * postfix_list[idx];
-            *cell = (prod % 12345) as i32;
-        }
+        let flat_result: Vec<i32> = prefix_list
+            .iter()
+            .zip(postfix_list.iter())
+            .map(|(&pre, &post)| ((pre * post) % 12345) as i32)
+            .collect();
 
-        result_grid
+        flat_result
+            .chunks(col_count)
+            .map(|chunk| chunk.to_vec())
+            .collect()
     }
 }
 
