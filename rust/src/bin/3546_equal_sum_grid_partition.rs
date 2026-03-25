@@ -1,18 +1,8 @@
-use std::ops::ControlFlow;
-
 struct Solution {}
 
 impl Solution {
     pub fn can_partition_grid(grid: Vec<Vec<i32>>) -> bool {
-        let prefix_list: Vec<u64> = grid
-            .iter()
-            .map(|row| row.iter().map(|&x| x as u64).sum::<u64>())
-            .scan(0_u64, |acc, x| {
-                *acc += x;
-                Some(*acc)
-            })
-            .collect();
-        let total: u64 = *prefix_list.last().unwrap();
+        let total: u64 = grid.iter().flatten().map(|&x| x as u64).sum();
 
         if total % 2 == 1 {
             return false;
@@ -20,25 +10,27 @@ impl Solution {
 
         let half = total / 2;
 
-        if prefix_list.binary_search(&half).is_ok() {
-            return true;
+        let mut sum = 0;
+        for row in &grid {
+            sum += row.iter().map(|x| *x as u64).sum::<u64>();
+            if sum == half {
+                return true;
+            } else if sum > half {
+                break;
+            }
         }
 
-        matches!(
-            (0..grid[0].len())
-                .map(|c| grid.iter().map(|rows| rows[c] as u64).sum::<u64>())
-                .try_fold(0_u64, |acc, x| {
-                    let sum = acc + x;
-                    if sum == half {
-                        ControlFlow::Break(true)
-                    } else if sum > half {
-                        ControlFlow::Break(false)
-                    } else {
-                        ControlFlow::Continue(sum)
-                    }
-                }),
-            ControlFlow::Break(true)
-        )
+        sum = 0;
+        for c in 0..grid[0].len() {
+            sum += &grid.iter().map(|row| row[c] as u64).sum::<u64>();
+            if sum == half {
+                return true;
+            } else if sum > half {
+                break;
+            }
+        }
+
+        false
     }
 }
 
