@@ -1,26 +1,18 @@
 struct Solution {}
 impl Solution {
     pub fn game_of_life(board: &mut Vec<Vec<i32>>) {
-        let mut dead_list: Vec<(usize, usize)> = Vec::new();
-        let mut spawn_list: Vec<(usize, usize)> = Vec::new();
-
-        for (row_idx, row) in board.iter().enumerate() {
-            for (col_idx, &cell) in row.iter().enumerate() {
+        for row_idx in 0..board.len() {
+            for col_idx in 0..board[0].len() {
                 let neighbours = Solution::count_surroundings(board, row_idx, col_idx);
-                if cell == 1 {
-                    if !(2..=3).contains(&neighbours) {
-                        dead_list.push((row_idx, col_idx));
-                    }
-                } else if neighbours == 3 {
-                    spawn_list.push((row_idx, col_idx));
+                if neighbours == 3 || (board[row_idx][col_idx] == 1 && neighbours == 2) {
+                    board[row_idx][col_idx] |= 2;
                 }
             }
         }
-        for (row_idx, col_idx) in dead_list {
-            board[row_idx][col_idx] = 0;
-        }
-        for (row_idx, col_idx) in spawn_list {
-            board[row_idx][col_idx] = 1;
+        for row in board.iter_mut() {
+            for cell in row.iter_mut() {
+                *cell >>= 1;
+            }
         }
     }
 
@@ -43,7 +35,8 @@ impl Solution {
                         .get(ri as usize)
                         .and_then(|r| r.get(ci as usize))
                         .copied()
-                        .unwrap_or(0);
+                        .unwrap_or(0)
+                        & 1;
                 }
             }
         }
