@@ -1,18 +1,14 @@
 struct Solution {}
 impl Solution {
     pub fn are_similar(mat: Vec<Vec<i32>>, k: i32) -> bool {
-        let cols = mat[0].len() as i32;
-        let shift = k % cols;
+        let cols = mat[0].len();
+        let shift = k as usize % cols;
 
-        for row in mat {
-            for i in 0..row.len() {
-                let shift_idx = ((i as i32 + shift) % cols) as usize;
-                if row[i] != row[shift_idx] {
-                    return false;
-                }
-            }
-        }
-        true
+        mat.iter().all(|row| {
+            row.iter()
+                .enumerate()
+                .all(|(i, c)| *c == row[(i + shift) % cols])
+        })
     }
 }
 
