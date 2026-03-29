@@ -2,15 +2,8 @@ struct Solution {}
 
 impl Solution {
     pub fn remove_element(nums: &mut Vec<i32>, val: i32) -> i32 {
-        let mut match_idx = 0;
-        for i in 0..nums.len() {
-            if nums[i] != val {
-                nums[match_idx] = nums[i];
-                match_idx += 1;
-            }
-        }
-
-        match_idx as i32
+        nums.retain(|x| *x != val);
+        nums.len() as i32
     }
 }
 
