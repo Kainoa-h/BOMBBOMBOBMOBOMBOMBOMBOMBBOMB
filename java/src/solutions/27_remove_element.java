@@ -2,19 +2,14 @@ import java.util.Arrays;
 
 class Solution {
   public int removeElement(int[] nums, int val) {
-    int result = nums.length;
     int i = 0;
-    int back = nums.length - 1;
-    while (i <= back) {
-      if (nums[i] == val) {
-        nums[i] = nums[back];
-        back--;
-        result--;
-        continue;
+    for (int n : nums) {
+      if (n != val) {
+        nums[i] = n;
+        i++;
       }
-      i++;
     }
-    return result;
+    return i;
   }
 
   void main() {
