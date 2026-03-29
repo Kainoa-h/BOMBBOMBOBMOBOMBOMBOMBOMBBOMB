@@ -2,37 +2,15 @@ struct Solution {}
 
 impl Solution {
     pub fn remove_element(nums: &mut Vec<i32>, val: i32) -> i32 {
-        let mut stack: Vec<usize> = Vec::new();
+        let mut match_idx = 0;
         for i in 0..nums.len() {
-            if nums[i] == val {
-                nums[i] = -1;
-                stack.push(i);
+            if nums[i] != val {
+                nums[match_idx] = nums[i];
+                match_idx += 1;
             }
         }
-        let left = (nums.len() - stack.len()) as i32;
 
-        let mut candidate_idx = nums.len();
-        while let Some(replace_idx) = stack.pop() {
-            let candidate = loop {
-                match candidate_idx.checked_sub(1) {
-                    Some(x) => candidate_idx = x,
-                    None => break 0,
-                };
-                let x = nums[candidate_idx];
-                if x != -1 {
-                    break x;
-                }
-            };
-
-            if candidate_idx <= replace_idx {
-                candidate_idx += 1;
-                continue;
-            }
-
-            nums[replace_idx] = candidate;
-        }
-
-        left
+        match_idx as i32
     }
 }
 
