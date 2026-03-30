@@ -1,23 +1,25 @@
-import java.util.HashMap;
+import java.util.Arrays;
 
 class Solution {
   public boolean checkStrings(String s1, String s2) {
-    HashMap<Character, Long> map1Even = new HashMap<>();
-    HashMap<Character, Long> map2Even = new HashMap<>();
-    for (int i = 0; i < s1.length(); i += 2) {
-      map1Even.merge(s1.charAt(i), 1L, Long::sum);
-      map2Even.merge(s2.charAt(i), 1L, Long::sum);
-    }
-    HashMap<Character, Long> map1Odd = new HashMap<>();
-    HashMap<Character, Long> map2Odd = new HashMap<>();
-    for (int i = 1; i < s1.length(); i += 2) {
-      map1Odd.merge(s1.charAt(i), 1L, Long::sum);
-      map2Odd.merge(s2.charAt(i), 1L, Long::sum);
-    }
-    if (map1Even.size() != map2Even.size() || map1Odd.size() != map2Odd.size()) {
+    if (s1.length() != s2.length())
       return false;
+
+    int[] even1 = new int[26];
+    int[] even2 = new int[26];
+    int[] odd1 = new int[26];
+    int[] odd2 = new int[26];
+    for (int i = 0; i < s1.length(); i++) {
+      if (i % 2 == 0) {
+        even1[s1.charAt(i) - 'a'] += 1;
+        even2[s2.charAt(i) - 'a'] += 1;
+      } else {
+
+        odd1[s1.charAt(i) - 'a'] += 1;
+        odd2[s2.charAt(i) - 'a'] += 1;
+      }
     }
-    return map1Even.equals(map2Even) && map1Odd.equals(map2Odd);
+    return Arrays.equals(even1, even2) && Arrays.equals(odd1, odd2);
   }
 
   void main() {
