@@ -5,21 +5,21 @@ class Solution {
     if (s1.length() != s2.length())
       return false;
 
-    int[] even1 = new int[26];
-    int[] even2 = new int[26];
-    int[] odd1 = new int[26];
-    int[] odd2 = new int[26];
+    int evenX = 0, evenD = 0, oddX = 0, oddD = 0;
     for (int i = 0; i < s1.length(); i++) {
+      int c1 = s1.charAt(i);
+      int c2 = s2.charAt(i);
+      int diffX = c1 ^ c2;
+      int diffD = (c1 * c1) - (c2 * c2);
       if (i % 2 == 0) {
-        even1[s1.charAt(i) - 'a'] += 1;
-        even2[s2.charAt(i) - 'a'] += 1;
+        evenX ^= diffX;
+        evenD += diffD;
       } else {
-
-        odd1[s1.charAt(i) - 'a'] += 1;
-        odd2[s2.charAt(i) - 'a'] += 1;
+        oddX ^= diffX;
+        oddD += diffD;
       }
     }
-    return Arrays.equals(even1, even2) && Arrays.equals(odd1, odd2);
+    return (evenX | oddX | evenD | oddD) == 0;
   }
 
   void main() {
