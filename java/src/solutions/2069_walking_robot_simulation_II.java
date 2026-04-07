@@ -1,5 +1,6 @@
 class Robot {
   int[] xy = new int[] { 0, 0 };
+  final int perimeter;
   final int[] widthHeight;
   final int[][] dirVec = new int[][] { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
   final String[] dirStr = new String[] { "East", "North", "West", "South" };
@@ -7,6 +8,7 @@ class Robot {
 
   public Robot(int width, int height) {
     widthHeight = new int[] { width - 1, height - 1 };
+    perimeter = 2 * (width - 1) + 2 * (height - 1);
   }
 
   public void step(int num) {
@@ -14,6 +16,11 @@ class Robot {
     int z = xy[idx];
     int dir = dirVec[dirIdx][idx];
     int space = widthHeight[idx];
+    num = num % perimeter;
+    if (xy[0] == 0 && xy[1] == 0 && num == 0) {
+      dirIdx = 3;
+      return;
+    }
     int nextZ = (dir * num) + z;
     if (nextZ < 0) {
       xy[idx] = 0;
