@@ -1,25 +1,27 @@
-import java.util.Arrays;
-
 class Solution {
   public boolean checkStrings(String s1, String s2) {
     if (s1.length() != s2.length())
       return false;
 
-    int evenX = 0, evenD = 0, oddX = 0, oddD = 0;
-    for (int i = 0; i < s1.length(); i++) {
-      int c1 = s1.charAt(i);
-      int c2 = s2.charAt(i);
-      int diffX = c1 ^ c2;
-      int diffD = (c1 * c1) - (c2 * c2);
-      if (i % 2 == 0) {
-        evenX ^= diffX;
-        evenD += diffD;
-      } else {
-        oddX ^= diffX;
-        oddD += diffD;
-      }
+    int[] map = new int[26];
+    for (int i = 0; i < s1.length(); i += 2) {
+      map[s1.charAt(i) - 'a']++;
+      map[s2.charAt(i) - 'a']--;
     }
-    return (evenX | oddX | evenD | oddD) == 0;
+    for (int x : map) {
+      if (x != 0)
+        return false;
+    }
+
+    for (int i = 1; i < s1.length(); i += 2) {
+      map[s1.charAt(i) - 'a']++;
+      map[s2.charAt(i) - 'a']--;
+    }
+    for (int x : map) {
+      if (x != 0)
+        return false;
+    }
+    return true;
   }
 
   void main() {
