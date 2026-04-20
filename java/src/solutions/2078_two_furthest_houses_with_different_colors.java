@@ -1,17 +1,15 @@
 class Solution {
   public int maxDistance(int[] colors) {
     int left = colors[0], right = colors[colors.length - 1];
+    int lastIdx = colors.length - 1;
 
-    for (int i = 0; i < colors.length; i++) {
-      if (left != colors[colors.length - 1 - i]) {
-        return colors.length - 1 - i;
-      }
-
-      if (right != colors[i]) {
-        return colors.length - 1 - i;
+    for (int dist = lastIdx; dist > 0; dist--) {
+      if (left != colors[dist] || right != colors[lastIdx - dist]) {
+        return dist;
       }
     }
-    return -1;
+
+    return 0;
   }
 
   void main() {
