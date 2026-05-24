@@ -1,20 +1,16 @@
-use std::collections::HashMap;
-
 struct Solution {}
 impl Solution {
     pub fn can_construct(ransom_note: String, magazine: String) -> bool {
-        let mut available_letters: HashMap<u8, u32> = HashMap::new();
-        for c in magazine.as_bytes() {
-            *available_letters.entry(*c).or_default() += 1;
+        let mut count_arr = [0_u32; 26];
+        for &c in magazine.as_bytes() {
+            count_arr[(c - b'a') as usize] += 1;
         }
-        for c in ransom_note.as_bytes() {
-            let Some(count) = available_letters.get_mut(&c) else {
-                return false;
-            };
-            if *count == 0 {
+        for &c in ransom_note.as_bytes() {
+            let i = (c - b'a') as usize;
+            if count_arr[i] == 0 {
                 return false;
             }
-            *count -= 1;
+            count_arr[i] -= 1;
         }
         true
     }
