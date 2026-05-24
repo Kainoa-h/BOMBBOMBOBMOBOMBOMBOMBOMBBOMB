@@ -11,38 +11,22 @@ impl Solution {
             let left_most = index.saturating_sub(d);
             let right_most = (index + d).min(arr.len() - 1);
 
-            let mut max_left = (0_usize, 0_i32);
+            let mut max_left = 0;
             for i in (left_most..index).rev() {
                 if arr[index] <= arr[i] {
                     break;
                 }
-                if arr[i] > max_left.1 {
-                    max_left = (i, arr[i]);
-                }
+                max_left = max_left.max(jump(arr, memo, d, i));
             }
-            let mut max_right = (0_usize, 0_i32);
+            let mut max_right = 0;
             for i in (index + 1)..=right_most {
                 if arr[index] <= arr[i] {
                     break;
                 }
-                if arr[i] > max_right.1 {
-                    max_right = (i, arr[i]);
-                }
+                max_right = max_right.max(jump(arr, memo, d, i));
             }
 
-            if max_left.1 == 0 && max_right.1 == 0 {
-                memo[index] = 1;
-                return 1;
-            }
-            let (mut left, mut right) = (0, 0);
-
-            if max_left.1 != 0 {
-                left = jump(arr, memo, d, max_left.0);
-            }
-            if max_right.1 != 0 {
-                right = jump(arr, memo, d, max_right.0);
-            }
-            let visted = left.max(right) + 1;
+            let visted = max_left.max(max_right) + 1;
             memo[index] = visted;
             visted
         }
