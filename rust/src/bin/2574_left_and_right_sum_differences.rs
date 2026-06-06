@@ -1,31 +1,16 @@
 struct Solution {}
 impl Solution {
     pub fn left_right_difference(nums: Vec<i32>) -> Vec<i32> {
-        let left_sum = nums
-            .iter()
-            .scan(0, |acc, &n| {
-                let x = *acc;
-                *acc += n;
-                Some(x)
+        let total_sum = nums.iter().sum::<i32>();
+        let mut left_sum = 0;
+        nums.iter()
+            .map(|n| {
+                let right_sum = total_sum - left_sum - n;
+                let diff = (left_sum - right_sum).abs();
+                left_sum += n;
+                diff
             })
-            .collect::<Vec<_>>();
-
-        let mut right_sum = nums
-            .iter()
-            .rev()
-            .scan(0, |acc, &n| {
-                let x = *acc;
-                *acc += n;
-                Some(x)
-            })
-            .collect::<Vec<_>>();
-        right_sum.reverse();
-
-        left_sum
-            .iter()
-            .zip(right_sum)
-            .map(|(l, r)| (l - r).abs())
-            .collect::<Vec<_>>()
+            .collect()
     }
 }
 
