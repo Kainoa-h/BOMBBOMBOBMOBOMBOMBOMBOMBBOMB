@@ -23,28 +23,14 @@ impl Solution {
     pub fn create_binary_tree(descriptions: Vec<Vec<i32>>) -> Option<Rc<RefCell<TreeNode>>> {
         let mut map = HashMap::<i32, Rc<RefCell<TreeNode>>>::new();
         for e_node in descriptions {
-            let node_value = e_node[0];
-            let child_value = e_node[1];
-            let is_left = e_node[2] == 1;
+            let (node_value, child_value, is_left) = (e_node[0], e_node[1], e_node[2] == 1);
             let tree_node = map
                 .entry(node_value)
-                .or_insert_with(|| {
-                    Rc::new(RefCell::new(TreeNode {
-                        val: node_value,
-                        left: None,
-                        right: None,
-                    }))
-                })
+                .or_insert_with(|| Rc::new(RefCell::new(TreeNode::new(node_value))))
                 .clone();
             let child_node = map
                 .entry(child_value)
-                .or_insert_with(|| {
-                    Rc::new(RefCell::new(TreeNode {
-                        val: child_value,
-                        left: None,
-                        right: None,
-                    }))
-                })
+                .or_insert_with(|| Rc::new(RefCell::new(TreeNode::new(child_value))))
                 .clone();
             if is_left {
                 tree_node.borrow_mut().left = Some(child_node.clone());
