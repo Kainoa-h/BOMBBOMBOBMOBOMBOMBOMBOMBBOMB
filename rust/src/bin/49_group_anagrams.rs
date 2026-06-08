@@ -12,12 +12,7 @@ impl Solution {
             map.entry(encoded_str).or_default().push(str);
         }
 
-        let mut result = Vec::new();
-        for e in map.into_values() {
-            result.push(e);
-        }
-
-        result
+        map.into_values().collect()
     }
 }
 
