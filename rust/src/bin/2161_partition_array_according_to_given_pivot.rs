@@ -1,23 +1,21 @@
 impl Solution {
     pub fn pivot_array(nums: Vec<i32>, pivot: i32) -> Vec<i32> {
-        let mut output = vec![0; nums.len()];
-        let mut pivot_index = nums.iter().filter(|x| **x < pivot).count();
-        let mut less_index = 0;
-        let mut more_index = nums.iter().filter(|x| **x == pivot).count() + pivot_index;
+        let mut less = Vec::new();
+        let mut more = Vec::new();
+        let mut count = 0;
         for n in nums {
             if n < pivot {
-                output[less_index] = n;
-                less_index += 1;
+                less.push(n);
             } else if n > pivot {
-                output[more_index] = n;
-                more_index += 1;
+                more.push(n);
             } else {
-                output[pivot_index] = n;
-                pivot_index += 1;
+                count += 1;
             }
         }
 
-        output
+        less.extend(vec![pivot; count]);
+        less.extend(more);
+        less
     }
 }
 
