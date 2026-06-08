@@ -2,17 +2,18 @@ use std::collections::HashMap;
 
 impl Solution {
     pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
-        let mut map = HashMap::<[u32; 26], Vec<String>>::new();
-        for str in strs {
-            let encoded_str = str.bytes().fold([0_u32; 26], |mut state, x| {
-                state[(x - b'a') as usize] += 1;
-                state
-            });
+        strs.into_iter()
+            .fold(HashMap::<[u32; 26], Vec<String>>::new(), |mut map, str| {
+                let encoded_str = str.bytes().fold([0_u32; 26], |mut state, x| {
+                    state[(x - b'a') as usize] += 1;
+                    state
+                });
 
-            map.entry(encoded_str).or_default().push(str);
-        }
-
-        map.into_values().collect()
+                map.entry(encoded_str).or_default().push(str);
+                map
+            })
+            .into_values()
+            .collect()
     }
 }
 
