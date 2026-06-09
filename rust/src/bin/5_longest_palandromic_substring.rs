@@ -1,34 +1,33 @@
 impl Solution {
     pub fn longest_palindrome(s: String) -> String {
-        if s.is_empty() {
-            return "".to_owned();
-        }
-        if s.len() == 1 {
+        if s.is_empty() || s.len() == 1 {
             return s;
         }
 
-        fn find_palindrome(mut left: usize, mut right: usize, s: &str) -> &str {
-            while right < s.len() && s.as_bytes()[left] == s.as_bytes()[right] {
-                if left == 0 {
-                    return &s[0..=right];
-                }
-                left -= 1;
-                right += 1;
+        let find_substring = |mut start, mut end| -> &str {
+            let b = s.as_bytes();
+            if b[start] != b[end] {
+                return &s[start..=start];
             }
-            &s[left + 1..right]
-        }
+            while start > 0 && end < s.len() - 1 && b[start - 1] == b[end + 1] {
+                start -= 1;
+                end += 1;
+            }
+            &s[start..=end]
+        };
 
         let mut longest = "";
-        for i in 0..s.len() - 1 {
-            let x = find_palindrome(i, i, &s);
-            if longest.len() < x.len() {
-                longest = x;
+        for idx in 0..s.len() - 1 {
+            let even = find_substring(idx, idx + 1);
+            if even.len() > longest.len() {
+                longest = even;
             }
-            let y = find_palindrome(i, i + 1, &s);
-            if longest.len() < y.len() {
-                longest = y;
+            let odd = find_substring(idx, idx);
+            if odd.len() > longest.len() {
+                longest = odd;
             }
         }
+
         longest.to_owned()
     }
 }
