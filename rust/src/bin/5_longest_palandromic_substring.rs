@@ -1,23 +1,19 @@
 impl Solution {
     pub fn longest_palindrome(s: String) -> String {
-        if s.is_empty() || s.len() == 1 {
-            return s;
-        }
-
-        let find_substring = |mut start, mut end| -> &str {
-            let b = s.as_bytes();
-            if b[start] != b[end] {
-                return &s[start..=start];
-            }
-            while start > 0 && end < s.len() - 1 && b[start - 1] == b[end + 1] {
+        let b = s.as_bytes();
+        let find_substring = |mut start: usize, mut end: usize| -> &str {
+            while end < b.len() && b[start] == b[end] {
+                if start == 0 || end == b.len() - 1 {
+                    return &s[start..=end];
+                }
                 start -= 1;
                 end += 1;
             }
-            &s[start..=end]
+            &s[start + 1..end]
         };
 
         let mut longest = "";
-        for idx in 0..s.len() - 1 {
+        for idx in 0..s.len() {
             let even = find_substring(idx, idx + 1);
             if even.len() > longest.len() {
                 longest = even;
