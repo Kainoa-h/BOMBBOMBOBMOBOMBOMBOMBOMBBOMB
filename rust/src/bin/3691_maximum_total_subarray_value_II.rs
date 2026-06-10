@@ -1,5 +1,5 @@
 use std::cmp::Ordering;
-use std::collections::{BinaryHeap, HashSet};
+use std::collections::BinaryHeap;
 use std::hash::Hash;
 
 #[derive(Debug, Clone, Copy)]
@@ -110,35 +110,30 @@ impl Solution {
     pub fn max_total_value(nums: Vec<i32>, mut k: i32) -> i64 {
         let mut max_sum = 0;
         let mut heap = BinaryHeap::new();
-        let mut set = HashSet::new();
         let seed = SubArray::new(&nums, 0, nums.len() - 1);
-        set.insert(seed);
         heap.push(seed);
 
         while k != 0 {
             let large = heap.pop().unwrap();
             max_sum += large.val as i64;
 
-            let left = large.derive_new(
-                &nums,
-                large.start_incl,
-                large.end_incl.saturating_sub(1),
-                large.end_incl,
-            );
             let right = large.derive_new(
                 &nums,
                 large.start_incl + 1,
                 large.end_incl,
                 large.start_incl,
             );
+            heap.push(right);
 
-            if set.insert(left) {
+            if large.start_incl == 0 {
+                let left = large.derive_new(
+                    &nums,
+                    large.start_incl,
+                    large.end_incl.saturating_sub(1),
+                    large.end_incl,
+                );
                 heap.push(left);
             }
-            if set.insert(right) {
-                heap.push(right);
-            }
-
             k -= 1;
         }
         max_sum
