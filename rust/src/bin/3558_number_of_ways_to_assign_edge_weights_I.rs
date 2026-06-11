@@ -15,7 +15,20 @@ impl Solution {
             max_depth = max_depth.max(depth);
         }
 
-        2_i32.pow(max_depth - 1)
+        let mut ans: i64 = 1;
+        let mut base: i64 = 2;
+        let mut exp = max_depth - 1;
+        let modulo: i64 = 1_000_000_007;
+
+        while exp > 0 {
+            if exp % 2 == 1 {
+                ans = (ans * base) % modulo;
+            }
+            base = (base * base) % modulo;
+            exp /= 2;
+        }
+
+        ans as i32
     }
 }
 
