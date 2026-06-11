@@ -1,0 +1,34 @@
+use std::collections::HashMap;
+
+impl Solution {
+    pub fn assign_edge_weights(mut edges: Vec<Vec<i32>>) -> i32 {
+        if edges.len() == 1 {
+            return 1;
+        }
+        let mut max_depth = 0;
+        let mut map = HashMap::new();
+        edges.sort_unstable_by_key(|x| (x[0], x[1]));
+        for edge_pair in edges {
+            let (parent, child) = (edge_pair[0], edge_pair[1]);
+            let depth = *map.entry(parent).or_insert(0) + 1;
+            map.insert(child, depth);
+            max_depth = max_depth.max(depth);
+        }
+
+        2_i32.pow(max_depth - 1)
+    }
+}
+
+struct Solution {}
+
+fn main() {
+    assert_eq!(Solution::assign_edge_weights(vec![vec![1, 2]]), 1);
+    assert_eq!(
+        Solution::assign_edge_weights(vec![vec![1, 2], vec![1, 3], vec![3, 4], vec![3, 5]]),
+        2
+    );
+    assert_eq!(
+        Solution::assign_edge_weights(vec![vec![2, 3], vec![1, 2]]),
+        2
+    );
+}
