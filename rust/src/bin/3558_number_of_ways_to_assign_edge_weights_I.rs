@@ -45,4 +45,8 @@ fn main() {
         Solution::assign_edge_weights(vec![vec![2, 3], vec![1, 2]]),
         2
     );
+    assert_eq!(
+        Solution::assign_edge_weights(vec![vec![1, 5], vec![5, 2], vec![5, 3], vec![5, 4]]),
+        2
+    );
 }
