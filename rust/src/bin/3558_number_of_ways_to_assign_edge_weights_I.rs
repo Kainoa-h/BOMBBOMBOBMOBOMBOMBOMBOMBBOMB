@@ -7,9 +7,10 @@ impl Solution {
         }
         let mut max_depth = 0;
         let mut map = HashMap::new();
-        edges.sort_unstable_by_key(|x| (x[0], x[1]));
+        edges.sort_unstable_by_key(|x| x[0]);
         for edge_pair in edges {
-            let (parent, child) = (edge_pair[0], edge_pair[1]);
+            let (u, v) = (edge_pair[0], edge_pair[1]);
+            let (parent, child) = (u.min(v), u.max(v));
             let depth = *map.entry(parent).or_insert(0) + 1;
             map.insert(child, depth);
             max_depth = max_depth.max(depth);
