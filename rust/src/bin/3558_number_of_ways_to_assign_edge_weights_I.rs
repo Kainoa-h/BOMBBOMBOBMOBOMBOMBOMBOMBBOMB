@@ -1,19 +1,37 @@
-use std::collections::HashMap;
-
 impl Solution {
-    pub fn assign_edge_weights(mut edges: Vec<Vec<i32>>) -> i32 {
+    pub fn assign_edge_weights(edges: Vec<Vec<i32>>) -> i32 {
         if edges.len() == 1 {
             return 1;
         }
+        let n = edges.len() + 2;
+
+        let mut adjacency_list = vec![vec![]; n];
+        for edge in edges {
+            let (u, v) = (edge[0] as usize, edge[1] as usize);
+            adjacency_list[u].push(v);
+            adjacency_list[v].push(u);
+        }
+
         let mut max_depth = 0;
-        let mut map = HashMap::new();
-        edges.sort_unstable_by_key(|x| x[0]);
-        for edge_pair in edges {
-            let (u, v) = (edge_pair[0], edge_pair[1]);
-            let (parent, child) = (u.min(v), u.max(v));
-            let depth = *map.entry(parent).or_insert(0) + 1;
-            map.insert(child, depth);
+        let mut stack = Vec::new();
+        let mut visted_list = vec![false; n];
+        stack.push((1_usize, 0_usize, 0)); // node, visted_index, depth
+        visted_list[1] = true;
+
+        while let Some(&(node, edges_index, depth)) = stack.last() {
             max_depth = max_depth.max(depth);
+            if edges_index < adjacency_list[node].len() {
+                if let Some((_, ei, _)) = stack.last_mut() {
+                    *ei += 1;
+                }
+                let neighbour = adjacency_list[node][edges_index];
+                if !visted_list[neighbour] {
+                    visted_list[neighbour] = true;
+                    stack.push((neighbour, 0, depth + 1));
+                }
+            } else {
+                stack.pop();
+            }
         }
 
         let mut ans: i64 = 1;
