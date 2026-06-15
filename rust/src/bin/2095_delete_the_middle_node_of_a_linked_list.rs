@@ -13,15 +13,13 @@ impl ListNode {
 }
 impl Solution {
     pub fn delete_middle(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-        let mut fast_head = head.as_ref();
+        let mut count_head = head.as_ref();
         let mut middle_index = 0;
-        while let Some(fast_node) = fast_head {
-            fast_head = fast_node.next.as_ref();
-            if fast_head.is_some() {
-                middle_index += 1;
-            }
-            fast_head = fast_head.and_then(|x| x.next.as_ref());
+        while let Some(fast_node) = count_head {
+            count_head = fast_node.next.as_ref();
+            middle_index += 1;
         }
+        middle_index /= 2;
 
         if middle_index == 0 {
             return None;
