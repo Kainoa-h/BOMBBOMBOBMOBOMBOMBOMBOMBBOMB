@@ -2,15 +2,15 @@ impl Solution {
     pub fn daily_temperatures(temperatures: Vec<i32>) -> Vec<i32> {
         let mut monotonic_stack = Vec::with_capacity(temperatures.len());
         let mut result = vec![0; temperatures.len()];
-        for i in 0..temperatures.len() {
+        for (curr_idx, &curr_val) in temperatures.iter().enumerate() {
             while let Some(&top_idx) = monotonic_stack.last()
-                && temperatures[top_idx] < temperatures[i]
+                && temperatures[top_idx] < curr_val
             {
                 monotonic_stack.pop();
-                let days_diff = i - top_idx;
+                let days_diff = curr_idx - top_idx;
                 result[top_idx] = days_diff as i32;
             }
-            monotonic_stack.push(i);
+            monotonic_stack.push(curr_idx);
         }
         result
     }
