@@ -1,57 +1,18 @@
-struct DSU {
-    dsu: Vec<usize>,
-}
-
-impl DSU {
-    fn new(size: usize) -> Self {
-        DSU {
-            dsu: (0..size).collect(),
-        }
-    }
-
-    fn find(&mut self, index: usize) -> usize {
-        if self.dsu[index] != index {
-            self.dsu[index] = self.find(self.dsu[index]);
-        }
-        self.dsu[index]
-    }
-
-    fn union(&mut self, x: usize, y: usize) {
-        let x_root = self.find(x);
-        let y_root = self.find(y);
-
-        self.dsu[y_root] = x_root;
-    }
-}
-
 impl Solution {
-    pub fn merge(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
-        let mut dsu = DSU::new(intervals.len());
+    pub fn merge(mut intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+        intervals.sort();
+        let mut result: Vec<Vec<i32>> = Vec::new();
 
-        for i in 0..intervals.len() {
-            let (x1, x2) = (intervals[i][0], intervals[i][1]);
-            for j in i..intervals.len() {
-                let (y1, y2) = (intervals[j][0], intervals[j][1]);
-                if (x1 >= y1 && x1 <= y2)
-                    || (x2 >= y1 && x2 <= y2)
-                    || (y1 >= x1 && y1 <= x2)
-                    || (y2 >= x1 && y2 <= x2)
-                {
-                    dsu.union(i, j);
-                }
+        for inter in intervals {
+            if let Some(prev_last) = result.last_mut()
+                && prev_last[1] >= inter[0]
+            {
+                prev_last[1] = prev_last[1].max(inter[1]);
+            } else {
+                result.push(inter);
             }
         }
 
-        let mut map = vec![None::<Vec<i32>>; intervals.len()];
-        for (i, inter) in intervals.iter().enumerate() {
-            let root = dsu.find(i);
-            let combi_interval = map[root].get_or_insert(vec![inter[0], inter[1]]);
-            combi_interval[0] = combi_interval[0].min(inter[0]);
-            combi_interval[1] = combi_interval[1].max(inter[1]);
-        }
-
-        let mut result: Vec<Vec<i32>> = map.into_iter().flatten().collect();
-        result.sort_unstable_by_key(|x| x[0]);
         result
     }
 }
