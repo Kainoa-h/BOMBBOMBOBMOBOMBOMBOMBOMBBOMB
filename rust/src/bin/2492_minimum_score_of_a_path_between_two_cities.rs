@@ -5,7 +5,6 @@ impl Solution {
             let (a, b, d) = (r[0], r[1], r[2]);
             dsu.merge(a as usize, b as usize, d);
         }
-        dsu.flatten();
         dsu.dsu[1].1
     }
 }
@@ -21,29 +20,21 @@ impl DSU {
         }
     }
 
-    fn find(&mut self, idx: usize, dist: i32) -> (usize, i32) {
-        let (i, d) = self.dsu[idx];
+    fn find(&mut self, idx: usize) -> usize {
+        let (i, _d) = self.dsu[idx];
         if i == idx {
-            self.dsu[i].1 = d.min(dist);
-            return (i, self.dsu[i].1);
+            return idx;
         }
-        self.dsu[idx] = self.find(i, dist.min(d));
-        self.dsu[idx]
+        self.dsu[idx].0 = self.find(i);
+        self.dsu[idx].0
     }
 
     fn merge(&mut self, a: usize, b: usize, d: i32) {
-        let (root_a, dist_a) = self.find(a, d);
-        let (root_b, dist_b) = self.find(b, d);
-        if root_a != root_b {
-            let (parent, child) = (root_a.min(root_b), root_a.max(root_b));
-            self.dsu[child] = (parent, dist_a.min(dist_b))
-        }
-    }
-
-    fn flatten(&mut self) {
-        for i in 0..self.dsu.len() {
-            self.find(i, i32::MAX);
-        }
+        let (root_a, root_b) = (self.find(a), self.find(b));
+        let (parent, child) = (root_a.min(root_b), root_a.max(root_b));
+        let min_dist = d.min(self.dsu[parent].1).min(self.dsu[child].1);
+        self.dsu[child] = (parent, min_dist);
+        self.dsu[parent].1 = min_dist;
     }
 }
 
