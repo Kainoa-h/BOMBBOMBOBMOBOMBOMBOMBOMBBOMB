@@ -1,40 +1,24 @@
 impl Solution {
     pub fn min_score(n: i32, roads: Vec<Vec<i32>>) -> i32 {
-        let mut dsu = DSU::new(n as usize + 1);
+        let mut dsu = (0..n as usize+1).map(|x| (x, i32::MAX)).collect::<Vec<(usize, i32)>>();
+
+        fn find(dsu:&mut Vec<(usize, i32)>, idx: usize)-> usize {
+            if dsu[idx].0 == idx {
+                return idx;
+            }
+            dsu[idx].0 = find(dsu, dsu[idx].0);
+            dsu[idx].0
+        }
+
         for r in roads {
-            let (a, b, d) = (r[0], r[1], r[2]);
-            dsu.merge(a as usize, b as usize, d);
+            let (a, b, d) = (r[0] as usize, r[1] as usize, r[2]);
+            let (root_a, root_b) = (find(&mut dsu, a), find(&mut dsu, b));
+            let (parent, child) = (root_a.min(root_b), root_a.max(root_b));
+            let min_dist = d.min(dsu[parent].1).min(dsu[child].1);
+            dsu[child] = (parent, min_dist);
+            dsu[parent].1 = min_dist;
         }
-        dsu.dsu[1].1
-    }
-}
-
-struct DSU {
-    dsu: Vec<(usize, i32)>,
-}
-
-impl DSU {
-    fn new(dsu: usize) -> Self {
-        Self {
-            dsu: (0..dsu).map(|x| (x, i32::MAX)).collect(),
-        }
-    }
-
-    fn find(&mut self, idx: usize) -> usize {
-        let (i, _d) = self.dsu[idx];
-        if i == idx {
-            return idx;
-        }
-        self.dsu[idx].0 = self.find(i);
-        self.dsu[idx].0
-    }
-
-    fn merge(&mut self, a: usize, b: usize, d: i32) {
-        let (root_a, root_b) = (self.find(a), self.find(b));
-        let (parent, child) = (root_a.min(root_b), root_a.max(root_b));
-        let min_dist = d.min(self.dsu[parent].1).min(self.dsu[child].1);
-        self.dsu[child] = (parent, min_dist);
-        self.dsu[parent].1 = min_dist;
+        dsu[1].1
     }
 }
 
