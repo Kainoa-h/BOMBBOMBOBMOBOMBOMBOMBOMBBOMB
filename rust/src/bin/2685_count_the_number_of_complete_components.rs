@@ -1,29 +1,34 @@
 impl Solution {
     pub fn count_complete_components(n: i32, edges: Vec<Vec<i32>>) -> i32 {
         let n = n as usize;
-        let mut adj_matrix = vec![vec![false; n]; n];
+        let mut adj_matrix = vec![0_u64; n];
         for edge in edges {
             let (e1, e2) = (edge[0] as usize, edge[1] as usize);
-            adj_matrix[e1][e1]= true;
-            adj_matrix[e1][e2]= true;
-            adj_matrix[e2][e2]= true;
-            adj_matrix[e2][e1]= true;
+            let (em1, em2) = (1 << e1, 1 << e2);
+            adj_matrix[e1] |= em1 | em2;
+            adj_matrix[e2] |= em1 | em2;
         }
-        let mut check_list = vec![false; n];
+        let mut visited = 0_u64;
         let mut count = 0;
         for i in 0..n {
-            if check_list[i] {
+            if (visited & (1 << i)) != 0 {
                 continue;
             }
 
             let mut fully_connected = true;
-            for (idx, _conn) in adj_matrix[i].iter().enumerate().filter(|x|*x.1) {
-                check_list[idx] = true;
-                if adj_matrix[idx] != adj_matrix[i] {
+            let byte = adj_matrix[i];
+            visited |= byte;
+            for off_set in 0..n {
+                let mask = 1 << off_set;
+                if (byte & mask) == 0 {
+                    continue;
+                }
+                if adj_matrix[off_set] != byte {
                     fully_connected = false;
                     break;
                 }
             }
+
             count += fully_connected as i32;
         }
 
