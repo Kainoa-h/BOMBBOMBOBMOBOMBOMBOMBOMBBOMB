@@ -18,15 +18,19 @@ impl Solution {
             let mut fully_connected = true;
             let byte = adj_matrix[i];
             visited |= byte;
-            for off_set in 0..n {
+            let mut active_bits = byte;
+            let mut off_set = 0;
+            while active_bits > 0 {
                 let mask = 1 << off_set;
-                if (byte & mask) == 0 {
-                    continue;
+                if (byte & mask) != 0 {
+                    if adj_matrix[off_set] != byte {
+                        fully_connected = false;
+                        break;
+                    }
+                    active_bits ^= mask;
                 }
-                if adj_matrix[off_set] != byte {
-                    fully_connected = false;
-                    break;
-                }
+
+                off_set += 1;
             }
 
             count += fully_connected as i32;
