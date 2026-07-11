@@ -19,18 +19,13 @@ impl Solution {
             let byte = adj_matrix[i];
             visited |= byte;
             let mut active_bits = byte;
-            let mut off_set = 0;
             while active_bits > 0 {
-                let mask = 1 << off_set;
-                if (byte & mask) != 0 {
-                    if adj_matrix[off_set] != byte {
-                        fully_connected = false;
-                        break;
-                    }
-                    active_bits ^= mask;
+                let off_set = active_bits.trailing_zeros() as usize;
+                if adj_matrix[off_set] != byte {
+                    fully_connected = false;
+                    break;
                 }
-
-                off_set += 1;
+                active_bits &= active_bits - 1;
             }
 
             count += fully_connected as i32;
