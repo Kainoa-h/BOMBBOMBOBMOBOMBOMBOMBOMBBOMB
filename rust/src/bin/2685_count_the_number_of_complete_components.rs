@@ -1,37 +1,43 @@
 impl Solution {
     pub fn count_complete_components(n: i32, edges: Vec<Vec<i32>>) -> i32 {
         let n = n as usize;
-        let mut adj_matrix = vec![0_u64; n];
-        for edge in edges {
-            let (e1, e2) = (edge[0] as usize, edge[1] as usize);
-            let (em1, em2) = (1 << e1, 1 << e2);
-            adj_matrix[e1] |= em1 | em2;
-            adj_matrix[e2] |= em1 | em2;
+        let mut dsu = (0..n).collect::<Vec<usize>>();
+        let mut dsu_weight = vec![1; n];
+        let mut dsu_edges = vec![0; n];
+
+        fn find(dsu: &mut [usize], idx: usize) -> usize {
+            if dsu[idx] == idx {
+                return idx;
+            }
+            dsu[idx] = find(dsu, dsu[idx]);
+            dsu[idx]
         }
-        let mut visited = 0_u64;
-        let mut count = 0;
-        for i in 0..n {
-            if (visited & (1 << i)) != 0 {
+
+        for edge in edges {
+            let (n1, n2) = (edge[0] as usize, edge[1] as usize);
+            let (r1, r2) = (find(&mut dsu, n1), find(&mut dsu, n2));
+            if r1 == r2 {
+                dsu_edges[r1] += 1;
                 continue;
             }
+            let (root, child) = if dsu_weight[r1] > dsu_weight[r2] {
+                (r1, r2)
+            } else {
+                (r2, r1)
+            };
 
-            let mut fully_connected = true;
-            let byte = adj_matrix[i];
-            visited |= byte;
-            let mut active_bits = byte;
-            while active_bits > 0 {
-                let off_set = active_bits.trailing_zeros() as usize;
-                if adj_matrix[off_set] != byte {
-                    fully_connected = false;
-                    break;
-                }
-                active_bits &= active_bits - 1;
-            }
-
-            count += fully_connected as i32;
+            dsu[child] = root;
+            dsu_weight[root] += dsu_weight[child];
+            dsu_edges[root] += dsu_edges[child] + 1;
         }
 
-        count
+        (0..n)
+            .filter(|&x| dsu[x] == x)
+            .filter(|&x| {
+                let nodes = dsu_weight[x];
+                let edges = dsu_edges[x];
+                (nodes * (nodes -1))/2 == edges
+            }).count() as i32
     }
 }
 
