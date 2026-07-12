@@ -1,0 +1,24 @@
+name: Notify frontend
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger target repository
+        env:
+          GH_TOKEN: ${{ secrets.CROSS_REPO_TOKEN }}
+          TARGET_REPOSITORY: Kainoa-h/BOMBBOMBOBMOBOMBOMBOMBOMBBOMB
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${TARGET_REPOSITORY}/dispatches" \
+            -f event_type="leetcode-updated" \
+            -f client_payload[source_repository]="${{ github.repository }}" \
+            -f client_payload[source_sha]="${{ github.sha }}"
