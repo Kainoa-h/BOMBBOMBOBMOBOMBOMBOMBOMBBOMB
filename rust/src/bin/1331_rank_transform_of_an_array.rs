@@ -5,9 +5,11 @@ impl Solution {
         sorted.dedup();
         let n = sorted.len();
 
-        arr.iter()
-            .map(|x| (sorted.binary_search(x).unwrap() + 1) as i32)
-            .collect()
+        for x in arr.iter_mut(){
+            *x = (sorted.binary_search(x).unwrap() + 1) as i32;
+        }
+
+        arr
     }
 }
 
