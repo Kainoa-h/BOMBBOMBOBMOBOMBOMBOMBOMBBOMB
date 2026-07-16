@@ -7,14 +7,14 @@ impl Solution {
             a
         };
 
-        let mut max = nums[0];
         let mut prefix_gcd = nums
             .into_iter()
-            .map(|x| {
-                max = max.max(x);
-                gcd(x, max)
+            .scan(0,|max, x|{
+                *max = x.max(*max);
+                Some(gcd(x, *max))
             })
             .collect::<Vec<i32>>();
+
         prefix_gcd.sort_unstable();
 
         let half = prefix_gcd.len() / 2;
