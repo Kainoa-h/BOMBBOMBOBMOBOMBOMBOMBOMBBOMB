@@ -8,25 +8,22 @@ impl Solution {
         };
 
         let mut max = nums[0];
-        let mut prefix_gcd = Vec::with_capacity(nums.len());
-        for x in nums {
-            max = max.max(x);
-            prefix_gcd.push(gcd(x, max));
-        }
-
+        let mut prefix_gcd = nums
+            .into_iter()
+            .map(|x| {
+                max = max.max(x);
+                gcd(x, max)
+            })
+            .collect::<Vec<i32>>();
         prefix_gcd.sort_unstable();
 
-        let mut left_ptr = 0;
-        let mut right_ptr = prefix_gcd.len() - 1;
-        let mut result = 0_i64;
-        while left_ptr < right_ptr {
-            let (a, b) = (prefix_gcd[left_ptr], prefix_gcd[right_ptr]);
-            result += gcd(a, b) as i64;
-
-            left_ptr += 1;
-            right_ptr -= 1;
-        }
-        result
+        let half = prefix_gcd.len() / 2;
+        prefix_gcd
+            .iter()
+            .zip(prefix_gcd.iter().rev())
+            .take(half)
+            .map(|(&a, &b)| gcd(a, b) as i64)
+            .sum()
     }
 }
 
