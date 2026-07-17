@@ -21,14 +21,12 @@ use std::rc::Rc;
 use std::cell::RefCell;
 impl Solution {
     pub fn max_depth(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-        fn search(node: Option<Rc<RefCell<TreeNode>>>, depth: i32) -> i32{
-            let Some(node) = node else { return depth - 1;};
-            let node = node.borrow();
-            cmp::max(search(node.left.clone(), depth + 1), search(node.right.clone(), depth + 1))
-        }
-        search(root, 1)
+        let Some(node) = root else { return 0; };
+        1 + cmp::max(
+            Self::max_depth(node.borrow().left.clone()),
+            Self::max_depth(node.borrow().right.clone())
+        )
     }
-
 }
 
 struct Solution {}
