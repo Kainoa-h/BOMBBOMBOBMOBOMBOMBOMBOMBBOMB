@@ -2,19 +2,15 @@ impl Solution {
     pub fn is_valid(s: String) -> bool {
         let mut stack = Vec::new();
         for &c in s.as_bytes() {
-            if c == b'[' || c == b'{' || c == b'(' {
-                stack.push(c);
-                continue;
-            }
-            let top = stack.pop();
-            if top.is_none() || c != match top.unwrap() {
-                    b'[' => b']',
-                    b'{' => b'}',
-                    b'(' => b')',
-                    _ => b' ',
+            match c {
+                b'[' => stack.push(b']'),
+                b'{' => stack.push(b'}'),
+                b'(' => stack.push(b')'),
+                _ => {
+                    if Some(c) != stack.pop() {
+                        return false;
+                    }
                 }
-            {
-                return false;
             }
         }
 
