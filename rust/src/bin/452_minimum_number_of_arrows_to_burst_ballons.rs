@@ -1,15 +1,13 @@
 impl Solution {
     pub fn find_min_arrow_shots(mut points: Vec<Vec<i32>>) -> i32 {
-        points.sort_unstable_by_key(|v| (v[0], v[1]));
+        points.sort_unstable_by_key(|v| v[1]);
 
-        let mut overlap_end = points[0][1];
+        let mut current_end = points[0][1];
         let mut result = 1;
         for v in points.iter().skip(1) {
-            let (start, end) = (v[0], v[1]);
-            overlap_end = overlap_end.min(end);
-            if start > overlap_end {
+            if v[0] > current_end {
                 result += 1;
-                overlap_end = v[1];
+                current_end = v[1];
             }
         }
         result
