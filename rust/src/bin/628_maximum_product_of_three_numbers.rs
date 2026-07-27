@@ -6,22 +6,12 @@ impl Solution {
         let mut last = 1001;
         let mut second_last = 1001;
         for n in nums {
-            if n > first {
-                third = second;
-                second = first;
-                first = n;
-            } else if n > second {
-                third = second;
-                second = n;
-            } else if n > third {
-                third = n;
-            } 
-            if n < last {
-                second_last = last;
-                last = n;
-            } else if n < second_last {
-                second_last = n;
-            }
+            third = third.max(second.min(n));
+            second = second.max(first.min(n));
+            first = first.max(n);
+
+            second_last = second_last.min(last.max(n));
+            last = last.min(n);
         }
         i32::max(first * second * third, first * last * second_last)
     }
