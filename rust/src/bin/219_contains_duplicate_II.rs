@@ -1,11 +1,15 @@
-use std::collections::HashMap;
+use std::collections::HashSet;
 
 impl Solution {
     pub fn contains_nearby_duplicate(nums: Vec<i32>, k: i32) -> bool {
         let k = k as usize;
-        let mut map: HashMap<i32,usize> = HashMap::new();
-        for (i,n) in nums.into_iter().enumerate(){
-            if let Some(prev_idx) = map.insert(n,i) && i-prev_idx <= k {
+        let mut set: HashSet<i32> = HashSet::with_capacity(usize::min(nums.len(), k));
+        for (i,&n) in nums.iter().enumerate(){
+            if i > k {
+                set.remove(&nums[i - k - 1]);
+            }
+
+            if !set.insert(n){
                     return true;
             }
         }
