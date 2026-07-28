@@ -5,28 +5,22 @@ impl Solution {
             count[(c - b'a') as usize] += 1;
         }
 
-        let mut str_list = vec![0_u8; s.len()];
-        let mut head = 0;
-        let mut tail = s.len() - 1;
-        let mut odd = 0_u8;
+        let mut left_half = Vec::<u8>::with_capacity(s.len()/2);
         for (i, count) in count.iter().enumerate() {
             let char = i as u8 + b'a';
-            if odd == 0 && count % 2 != 0 {
-                odd = char;
-            }
-            let count = count / 2;
-            for _ in 0..count {
-                str_list[head] = char;
-                str_list[tail] = char;
-                head += 1;
-                tail -= 1;
-            }
-        }
-        if odd != 0 {
-            str_list[s.len()/2] = odd;
+            left_half.extend(std::iter::repeat_n(char, count/2));
         }
 
-        str_list.into_iter().map(|x| x as char).collect()
+        let mut result = Vec::with_capacity(s.len());
+        result.extend(&left_half);
+        if s.len() % 2 != 0 {
+            result.push(s.as_bytes()[s.len()/2]);
+        }
+        result.extend(left_half.iter().rev().copied());
+
+        unsafe {
+            String::from_utf8_unchecked(result)
+        }
     }
 }
 
