@@ -1,10 +1,13 @@
 impl Solution {
     pub fn minimum_pushes(word: String) -> i32 {
+        let len = word.len() as i32;
         let mut pushes = 0;
-        for i in 0..word.len() as i32 {
-            pushes += i/8 + 1;
-        }
+        let full_blocks = len / 8;
+        let remainder = len % 8;
 
+        pushes += 8 * full_blocks * (full_blocks + 1) / 2;
+        pushes += remainder * (full_blocks + 1);
+        
         pushes
     }
 }
