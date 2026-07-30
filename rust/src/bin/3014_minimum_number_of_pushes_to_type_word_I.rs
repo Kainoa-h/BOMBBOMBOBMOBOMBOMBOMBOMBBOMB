@@ -1,12 +1,8 @@
 impl Solution {
     pub fn minimum_pushes(word: String) -> i32 {
-        let mut len = word.len() as i32;
         let mut pushes = 0;
-        let mut offset = 1;
-        while len > 0 {
-            pushes += if len < 9 { len * offset } else { 8 * offset };
-            len -= 8;
-            offset += 1;
+        for i in 0..word.len() as i32 {
+            pushes += i/8 + 1;
         }
 
         pushes
