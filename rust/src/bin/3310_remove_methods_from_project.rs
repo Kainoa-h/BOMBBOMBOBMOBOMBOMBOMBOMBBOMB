@@ -8,10 +8,13 @@ impl Solution {
 
         let mut sus_list = vec![false; n];
         let mut stack = vec![k as usize];
+        sus_list[k as usize] = true;
         while let Some(sus) = stack.pop() {
-            if !sus_list[sus] {
-                sus_list[sus] = true;
-                stack.append(&mut call_list[sus]);
+            for &next in &call_list[sus] {
+                if !sus_list[next] {
+                    sus_list[next] = true;
+                        stack.push(next);
+                }
             }
         }
 
