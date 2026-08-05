@@ -2,8 +2,12 @@ impl Solution {
     pub fn remaining_methods(n: i32, k: i32, invocations: Vec<Vec<i32>>) -> Vec<i32> {
         let n = n as usize;
         let mut call_list = vec![Vec::new(); n];
-        for inv in invocations {
-            call_list[inv[0] as usize].push(inv[1] as usize);
+        let mut flattened_invocations = Vec::with_capacity(invocations.len());
+        for inv in &invocations {
+            let f = inv[0] as usize;
+            let t = inv[1] as usize;
+            call_list[f].push(t);
+            flattened_invocations.push((f, t));
         }
 
         let mut sus_list = vec![false; n];
@@ -13,23 +17,19 @@ impl Solution {
             for &next in &call_list[sus] {
                 if !sus_list[next] {
                     sus_list[next] = true;
-                        stack.push(next);
+                    stack.push(next);
                 }
             }
         }
+        let cannot_rm = flattened_invocations
+            .iter()
+            .any(|&x| !sus_list[x.0] && sus_list[x.1]);
 
-        let mut result = Vec::new();
-        for i in 0..n {
-            if sus_list[i] {
-                continue;
-            }
-            if call_list[i].iter().any(|&x| sus_list[x]) {
-                return (0..n as i32).collect();
-            }
-            result.push(i as i32);
+        if cannot_rm {
+            (0..n as i32).collect()
+        } else {
+            (0..n as i32).filter(|&x| !sus_list[x as usize]).collect()
         }
-
-        result
     }
 }
 
