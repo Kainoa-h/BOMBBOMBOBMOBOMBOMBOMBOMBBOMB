@@ -20,13 +20,19 @@ impl Solution {
         let mut head = ListNode::new(0);
         let mut node = &mut head;
         while l1.is_some() || l2.is_some() || carry != 0 {
-            let n1 = l1.as_ref().map_or(0, |x| x.val);
-            let n2 = l2.as_ref().map_or(0, |x| x.val);
-            let sum = n1 + n2 + carry;
-            carry = sum / 10;
+            let mut sum = carry;
 
-            l1 = l1.and_then(|x| x.next);
-            l2 = l2.and_then(|x| x.next);
+            if let Some(n) = l1 {
+                sum += n.val;
+                l1 = n.next;
+            }
+
+            if let Some(n) = l2 {
+                sum += n.val;
+                l2 = n.next;
+            }
+
+            carry = sum / 10;
 
             node.next = Some(Box::new(ListNode::new(sum % 10)));
             node = node.next.as_mut().unwrap();
