@@ -18,6 +18,7 @@ impl Solution {
             }
         }
 
+        let mut result = Vec::new();
         for i in 0..n {
             if sus_list[i] {
                 continue;
@@ -25,9 +26,10 @@ impl Solution {
             if call_list[i].iter().any(|&x| sus_list[x]) {
                 return (0..n as i32).collect();
             }
+            result.push(i as i32);
         }
 
-        (0..n as i32).filter(|&x| !sus_list[x as usize]).collect()
+        result
     }
 }
 
