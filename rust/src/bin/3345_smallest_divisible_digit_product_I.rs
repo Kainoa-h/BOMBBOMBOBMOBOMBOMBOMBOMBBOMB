@@ -4,23 +4,17 @@ impl Solution {
             return n;
         }
 
-        let incr = |oneth, tenth| {
-            let no = oneth + 1;
-            if no == 10 {
-                return (0, tenth + 1);
+        let (mut ones, mut tens) = (n % 10, (n / 10) % 10);
+
+        while (ones * tens.max(1)) % t != 0 {
+            ones += 1;
+            if ones == 10 {
+                ones = 0;
+                tens += 1;
             }
-            (no, tenth)
-        };
-
-        let (mut oneth, mut tenth) = (n % 10, (n / 10) % 10);
-
-        let mut prod = oneth * tenth.max(1);
-        while prod % t != 0 {
-            (oneth, tenth) = incr(oneth, tenth);
-            prod = oneth * tenth.max(1);
         }
 
-        tenth * 10 + oneth
+        tens * 10 + ones
     }
 }
 
