@@ -3,12 +3,12 @@ impl Solution {
         let (first, rest) = nums.split_first().unwrap();
         let mut prev = *first;
         let mut sum = *first;
-        let mut left = 0_usize;
+        let mut left = rest.len();
         let mut valid_nums = [true; 51];
         valid_nums[sum as usize] = false;
         for (idx,&n) in rest.iter().enumerate() {
             if n != prev + 1 {
-                left = idx + 1;
+                left = idx;
                 break;
             }
             prev = n;
@@ -20,7 +20,7 @@ impl Solution {
             return sum;
         }
 
-        for &n in rest.iter().skip(left.saturating_sub(1)) {
+        for &n in rest.iter().skip(left) {
             valid_nums[n as usize] = false;
         }
 
