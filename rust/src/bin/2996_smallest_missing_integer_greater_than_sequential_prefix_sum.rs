@@ -16,12 +16,12 @@ impl Solution {
             valid_nums[n as usize] = false;
         }
 
-        for &n in rest.iter().skip(left - 1) {
-            valid_nums[n as usize] = false;
-        }
-
         if sum > 50 {
             return sum;
+        }
+
+        for &n in rest.iter().skip(left.saturating_sub(1)) {
+            valid_nums[n as usize] = false;
         }
 
         for (idx, &b) in valid_nums.iter().enumerate().skip(sum as usize) {
