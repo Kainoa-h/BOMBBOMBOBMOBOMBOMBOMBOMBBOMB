@@ -6,13 +6,22 @@ impl Solution {
         let mut start = 0;
         let mut max = 0;
         for (end, &n) in nums.iter().enumerate() {
-            *map.entry(n).or_default() += 1;
-            
-            while *map.get(&n).unwrap() > k {
-                *map.get_mut(&nums[start]).unwrap() -= 1;
-                start += 1;
-            }
+            let count = *map.entry(n).and_modify(|x|*x+=1).or_insert(1);
 
+            if count > k {
+                loop {
+                    let val = nums[start];
+                    if let Some(x) = map.get_mut(&val) {
+                        *x -= 1;
+                    }
+                    start += 1;
+                    
+                    if val == n {
+                        break;
+                    }
+                }
+            }
+            
             max = max.max(end - start + 1);
         }
 
