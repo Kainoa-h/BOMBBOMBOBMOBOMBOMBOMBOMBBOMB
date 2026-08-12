@@ -5,15 +5,15 @@ impl Solution {
         let mut map = HashMap::<i32,i32>::new();
         let mut start = 0;
         let mut max = 0;
-        for (idx, &n) in nums.iter().enumerate() {
-            map.entry(n).and_modify(|x| *x+=1).or_insert(1);
+        for (end, &n) in nums.iter().enumerate() {
+            *map.entry(n).or_default() += 1;
             
             while *map.get(&n).unwrap() > k {
-                map.entry(nums[start]).and_modify(|x| *x -= 1);
+                *map.get_mut(&nums[start]).unwrap() -= 1;
                 start += 1;
             }
 
-            max = max.max(idx - start + 1);
+            max = max.max(end - start + 1);
         }
 
         max as i32
