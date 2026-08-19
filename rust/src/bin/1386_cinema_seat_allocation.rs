@@ -1,24 +1,31 @@
 impl Solution {
     pub fn max_number_of_families(mut n: i32, mut reserved_seats: Vec<Vec<i32>>) -> i32 {
-        reserved_seats.sort_unstable_by_key(|v| (v[0], v[1]));
+        const SEATS_MASK_1: u16 = 0b0111100000;
+        const SEATS_MASK_2: u16 = 0b0001111000;
+        const SEATS_MASK_3: u16 = 0b0000011110;
+
+        reserved_seats.sort_unstable_by_key(|v| v[0]);
 
         let mut sum = 0;
         for chunk in reserved_seats.chunk_by(|a, b| a[0] == b[0]) {
-            let mut row = [true; 10];
+            let mut row = 0_u16;
             for c in chunk {
-                row[c[1] as usize - 1] = false;
+                row |= 1 << (c[1] - 1);
             }
-            let avail = row[1] && row[2] && row[3] && row[4];
-            sum += avail as usize;
-            row[4] &= !avail;
-            let avail = row[3] && row[4] && row[5] && row[6];
-            sum += avail as usize;
-            row[6] &= !avail;
-            sum += (row[5] && row[6] && row[7] && row[8]) as usize;
+            let left = row & SEATS_MASK_1 == 0;
+            let mid = row & SEATS_MASK_2 == 0;
+            let right = row & SEATS_MASK_3 == 0;
+
+            if left && right {
+                sum += 2;
+            }
+            else if left || mid || right {
+                sum += 1;
+            }
 
             n -= 1;
         }
-        sum as i32 + n * 2
+        sum + n * 2
     }
 }
 
