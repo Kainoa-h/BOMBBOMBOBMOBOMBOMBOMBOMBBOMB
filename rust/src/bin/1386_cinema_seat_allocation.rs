@@ -13,20 +13,13 @@ impl Solution {
             }
         }
 
-        let mut sum = (n - row_mask_map.len() as i32) * 2;
-        for &row in row_mask_map.values() {
-            let left = (row & SEATS_MASK_3) == 0;
-            let mid = (row & SEATS_MASK_2) == 0;
-            let right = (row & SEATS_MASK_1) == 0;
-
-            if left && right {
-                sum += 2;
-            } else if left || mid || right {
-                sum += 1;
-            }
-        }
-
-        sum   
+        let sum = (n - row_mask_map.len() as i32) * 2;
+        sum + row_mask_map
+            .values()
+            .filter(|&&row| {
+                (row & SEATS_MASK_3) == 0 || (row & SEATS_MASK_2) == 0 || (row & SEATS_MASK_1) == 0
+            })
+            .count() as i32
     }
 }
 
