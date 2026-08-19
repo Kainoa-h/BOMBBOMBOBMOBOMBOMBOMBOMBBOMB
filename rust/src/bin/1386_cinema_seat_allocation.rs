@@ -1,31 +1,32 @@
+use std::collections::HashMap;
+
 impl Solution {
-    pub fn max_number_of_families(mut n: i32, mut reserved_seats: Vec<Vec<i32>>) -> i32 {
-        const SEATS_MASK_1: u16 = 0b0111100000;
-        const SEATS_MASK_2: u16 = 0b0001111000;
-        const SEATS_MASK_3: u16 = 0b0000011110;
-
-        reserved_seats.sort_unstable_by_key(|v| v[0]);
-
-        let mut sum = 0;
-        for chunk in reserved_seats.chunk_by(|a, b| a[0] == b[0]) {
-            let mut row = 0_u16;
-            for c in chunk {
-                row |= 1 << (c[1] - 1);
+    pub fn max_number_of_families(n: i32, reserved_seats: Vec<Vec<i32>>) -> i32 {
+        const SEATS_MASK_1: u16 = 0b01111000000;
+        const SEATS_MASK_2: u16 = 0b00011110000;
+        const SEATS_MASK_3: u16 = 0b00000111100;
+        let mut row_mask_map = HashMap::<i32, u16>::new();
+        for v in reserved_seats {
+            let (row, col) = (v[0], v[1]);
+            if (2..=9).contains(&col) {
+                *row_mask_map.entry(row).or_insert(0) |= 1 << col;
             }
-            let left = row & SEATS_MASK_1 == 0;
-            let mid = row & SEATS_MASK_2 == 0;
-            let right = row & SEATS_MASK_3 == 0;
+        }
+
+        let mut sum = (n - row_mask_map.len() as i32) * 2;
+        for &row in row_mask_map.values() {
+            let left = (row & SEATS_MASK_3) == 0;
+            let mid = (row & SEATS_MASK_2) == 0;
+            let right = (row & SEATS_MASK_1) == 0;
 
             if left && right {
                 sum += 2;
-            }
-            else if left || mid || right {
+            } else if left || mid || right {
                 sum += 1;
             }
-
-            n -= 1;
         }
-        sum + n * 2
+
+        sum   
     }
 }
 
