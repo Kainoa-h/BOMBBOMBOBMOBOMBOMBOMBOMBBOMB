@@ -3,14 +3,19 @@ impl Solution {
         let mut v1 = Vec::with_capacity(nums.len());
         let mut v2 = Vec::new();
 
-        v1.push(nums[0]);
-        v2.push(nums[1]);
+        let mut l1 = nums[0];
+        let mut l2 = nums[1];
+
+        v1.push(l1);
+        v2.push(l2);
 
         for r in nums.into_iter().skip(2) {
-            if v1.last().unwrap() > v2.last().unwrap() {
-                v1.push(r)
+            if l1 > l2 {
+                l1 = r;
+                v1.push(r);
             } else {
-                v2.push(r)
+                l2 = r;
+                v2.push(r);
             }
         }
 
