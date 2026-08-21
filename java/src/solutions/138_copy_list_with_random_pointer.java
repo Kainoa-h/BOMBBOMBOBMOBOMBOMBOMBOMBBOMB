@@ -1,23 +1,32 @@
-import java.util.HashMap;
-import java.util.Map;
-
 class Solution {
   public Node copyRandomList(Node head) {
-    Map<Node, Node> map = new HashMap<>();
+    if (head == null) return null;
+
     var current = head;
     while (current != null) {
-      map.put(current, new Node(current.val));
-      current = current.next;
+      var clone = new Node(current.val);
+      clone.next = current.next;
+      current.next = clone;
+      current = clone.next;
     }
 
     current = head;
     while (current != null) {
-      map.get(current).next = map.get(current.next);
-      map.get(current).random = map.get(current.random);
+      var clone = current.next;
+      clone.random = current.random == null ? null : current.random.next;
+      current = clone.next;
+    }
+
+    current = head;
+    var copyHead = head.next;
+    while (current != null) {
+      var copyNext = current.next;
+      current.next = copyNext.next;
+      copyNext.next = current.next == null ? null : current.next.next;
       current = current.next;
     }
 
-    return map.get(head);
+    return copyHead;
   }
 }
 
