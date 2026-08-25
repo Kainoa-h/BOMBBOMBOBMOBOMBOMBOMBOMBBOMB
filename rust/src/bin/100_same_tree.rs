@@ -23,24 +23,20 @@ impl Solution {
         p: Option<Rc<RefCell<TreeNode>>>,
         q: Option<Rc<RefCell<TreeNode>>>,
     ) -> bool {
-        let mut p_stack = vec![p];
-        let mut q_stack = vec![q];
+        let mut stack = vec![(p,q)];
 
-        while p_stack.len() > 0 || q_stack.len() > 0 {
-            let (Some(po), Some(qo)) = (p_stack.pop(), q_stack.pop()) else {
-                return false;
-            };
-            if po.is_some() != qo.is_some() {
-                return false;
-            }
-            if let (Some(p), Some(q)) = (po, qo) {
-                if p.borrow().val != q.borrow().val {
-                    return false;
+        while let Some((po,qo)) = stack.pop() {
+            match (po,qo) {
+                (None, None) => continue,
+                (Some(p), Some(q)) => {
+                    let (p, q) = (p.borrow(), q.borrow());
+                    if p.val != q.val {
+                        return false;
+                    }
+                    stack.push((p.left.clone(), q.left.clone()));
+                    stack.push((p.right.clone(), q.right.clone()));
                 }
-                p_stack.push(p.borrow().left.clone());
-                p_stack.push(p.borrow().right.clone());
-                q_stack.push(q.borrow().left.clone());
-                q_stack.push(q.borrow().right.clone());
+                _ => return false
             }
         }
 
