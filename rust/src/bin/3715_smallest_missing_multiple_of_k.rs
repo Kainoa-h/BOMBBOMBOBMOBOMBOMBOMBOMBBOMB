@@ -4,10 +4,7 @@ impl Solution {
         let mut seen = [false;101];
         nums.into_iter().for_each(|x| seen[x as usize] = true);
         let mut x = k;
-        while x <= 100 {
-            if !seen[x] {
-                return x as i32;
-            }
+        while x < seen.len() && seen[x] {
             x += k;
         }
         x as i32
