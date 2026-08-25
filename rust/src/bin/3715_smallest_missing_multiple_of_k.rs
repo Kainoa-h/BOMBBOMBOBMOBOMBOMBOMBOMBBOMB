@@ -1,5 +1,16 @@
 impl Solution {
     pub fn missing_multiple(nums: Vec<i32>, k: i32) -> i32 {
+        let k = k as usize;
+        let mut seen = [false;101];
+        nums.into_iter().for_each(|x| seen[x as usize] = true);
+        let mut x = k;
+        while x <= 100 {
+            if !seen[x] {
+                return x as i32;
+            }
+            x += k;
+        }
+        x as i32
     }
 }
 
