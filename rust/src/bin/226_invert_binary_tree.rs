@@ -1,4 +1,5 @@
 use std::cell::{RefCell, RefMut};
+use std::mem;
 use std::rc::Rc;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -21,24 +22,19 @@ impl TreeNode {
 
 impl Solution {
     pub fn invert_tree(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> {
-        fn swap_children(node: &mut RefMut<'_, TreeNode>) {
-            let left = node.left.take();
-            node.left = node.right.take();
-            node.right = left;
-
-            if let Some(left) = &node.left {
-                swap_children(&mut left.borrow_mut());
-            }
-            if let Some(right) = &node.right {
-                swap_children(&mut right.borrow_mut());
+        fn swap_children(node: Option<&Rc<RefCell<TreeNode>>>) {
+            if let Some(n) = node {
+                let mut n_borrow = n.borrow_mut();
+                let n_ref = &mut *n_borrow;
+                mem::swap(&mut n_ref.left, &mut n_ref.right);
+                swap_children(n_ref.left.as_ref());
+                swap_children(n_ref.right.as_ref());
             }
         }
-        if let Some(r) = &root {
-            swap_children(&mut r.borrow_mut());
-        }
+        swap_children(root.as_ref());
 
         root
     }
 }
 
-struct Solution{}
+struct Solution {}
