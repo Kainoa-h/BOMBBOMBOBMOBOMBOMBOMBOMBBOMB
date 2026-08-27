@@ -2,44 +2,35 @@ impl Solution {
     pub fn lex_greater_permutation(s: String, target: String) -> String {
         let mut bucket = [0; 256];
         s.as_bytes().iter().for_each(|&b| bucket[b as usize] += 1);
-        let next_greater = |bucket: &[usize; 256], c: u8| {
-            bucket
-                .iter()
-                .enumerate()
-                .skip(c as usize + 1)
-                .take((b'z' - c + 1) as usize)
-                .find(|&(_, &count)| count > 0)
-                .map(|(i, _)| i)
+        let next_greater = |bucket: &[usize; 256], byte: u8| {
+            ((byte + 1)..=b'z').find(|&c| bucket[c as usize] > 0)
         };
 
         let bytes = target.as_bytes();
-        let mut result = Vec::new();
-        let mut idx = 0;
+        let mut result = Vec::with_capacity(bytes.len());
         let mut backtrack_needed = true;
 
-        while idx < bytes.len() {
-            let t_byte = bytes[idx];
-            if bucket[t_byte as usize] > 0 {
-                bucket[t_byte as usize] -= 1;
-                result.push(t_byte);
-                idx += 1;
+        for &b in bytes {
+            if bucket[b as usize] > 0 {
+                bucket[b as usize] -= 1;
+                result.push(b);
                 continue;
             }
 
-            if let Some(next) = next_greater(&bucket, t_byte) {
-                result.push(next as u8);
-                bucket[next] -= 1;
+            if let Some(next) = next_greater(&bucket, b) {
+                result.push(next);
+                bucket[next as usize] -= 1;
                 backtrack_needed = false;
             }
             break;
         }
 
-        if idx == bytes.len() || backtrack_needed {
+        if backtrack_needed {
             while let Some(p) = result.pop() {
                 bucket[p as usize] += 1;
                 if let Some(next) = next_greater(&bucket, p) {
-                    result.push(next as u8);
-                    bucket[next] -= 1;
+                    result.push(next);
+                    bucket[next as usize] -= 1;
                     break;
                 }
             }
@@ -54,7 +45,7 @@ impl Solution {
             }
         }
 
-        str::from_utf8(&result).unwrap().to_owned()
+        String::from_utf8(result).unwrap()
     }
 }
 
