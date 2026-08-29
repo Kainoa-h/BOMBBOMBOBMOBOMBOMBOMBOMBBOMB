@@ -3,13 +3,11 @@ impl Solution {
         let mut indexes = (0..nums.len()).collect::<Vec<usize>>();
         indexes.sort_unstable_by_key(|&x| nums[x]);
         let mut result = vec![0; nums.len()];
-        for group in indexes.chunk_by(|&a, &b| nums[b] - nums[a] <= limit) {
-            let mut index_order_group = group.to_vec();
-            index_order_group.sort_unstable_by_key(|&x| x);
-            for i in 0..group.len() {
-                let val = nums[group[i]];
-                let idx = index_order_group[i];
-                result[idx] = val;
+        for val_ordered_idx in indexes.chunk_by(|&a, &b| nums[b] - nums[a] <= limit) {
+            let mut index_ordered_idx = val_ordered_idx.to_vec();
+            index_ordered_idx.sort_unstable();
+            for (&src, idx) in val_ordered_idx.iter().zip(index_ordered_idx) {
+                result[idx] = nums[src];
             }
         }
         result
