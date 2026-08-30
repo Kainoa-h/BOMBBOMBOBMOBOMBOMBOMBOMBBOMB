@@ -1,13 +1,12 @@
 impl Solution {
     pub fn minimum_deletions(nums: Vec<i32>) -> i32 {
-        let (mut max, mut max_idx) = (i32::MIN, 0);
-        let (mut min, mut min_idx) = (i32::MAX, 0);
+        let (mut max, mut max_idx) = (nums[0], 0);
+        let (mut min, mut min_idx) = (nums[0], 0);
         for (idx, &n) in nums.iter().enumerate() {
             if n < min {
                 min = n;
                 min_idx = idx;
-            }
-            if n > max {
+            } else if n > max {
                 max = n;
                 max_idx = idx;
             }
