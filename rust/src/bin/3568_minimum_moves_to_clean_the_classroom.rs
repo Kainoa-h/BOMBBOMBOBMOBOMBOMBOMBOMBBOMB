@@ -1,8 +1,8 @@
 use std::collections::{HashMap, VecDeque};
 
 struct State {
-    row: usize,
-    col: usize,
+    row: u8,
+    col: u8,
     energy: u16,
     mask: u16,
 }
@@ -15,10 +15,10 @@ impl Solution {
         for (row_i, row) in classroom.iter().enumerate() {
             for (col_i, &byte) in row.as_bytes().iter().enumerate() {
                 if byte == b'L' {
-                    litter_map.insert((row_i, col_i), count);
+                    litter_map.insert((row_i as u8, col_i as u8), count);
                     count += 1;
                 } else if byte == b'S' {
-                    start = (row_i, col_i);
+                    start = (row_i as u8, col_i as u8);
                 }
             }
         }
@@ -39,7 +39,7 @@ impl Solution {
         while !queue.is_empty() {
             for _ in 0..queue.len() {
                 let mut state = queue.pop_front().unwrap();
-                match classroom[state.row].as_bytes()[state.col] {
+                match classroom[state.row as usize].as_bytes()[state.col as usize] {
                     b'R' => state.energy = energy as u16,
                     b'L' => {
                         state.mask |=
@@ -52,7 +52,7 @@ impl Solution {
                     return steps;
                 }
 
-                let entry = best_mask[state.row][state.col]
+                let entry = best_mask[state.row as usize][state.col as usize]
                     .entry(state.mask)
                     .or_insert(0);
 
@@ -66,18 +66,18 @@ impl Solution {
                 }
 
                 for (dr, dc) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
-                    let nr = state.row as isize + dr;
-                    let nc = state.col as isize + dc;
+                    let nr = state.row as i8 + dr;
+                    let nc = state.col as i8 + dc;
 
                     if nr >= 0
-                        && nr < rows as isize
+                        && nr < rows as i8
                         && nc >= 0
-                        && nc < cols as isize
+                        && nc < cols as i8
                         && classroom[nr as usize].as_bytes()[nc as usize] != b'X'
                     {
                         queue.push_back(State {
-                            row: nr as usize,
-                            col: nc as usize,
+                            row: nr as u8,
+                            col: nc as u8,
                             energy: state.energy - 1,
                             mask: state.mask,
                         });
