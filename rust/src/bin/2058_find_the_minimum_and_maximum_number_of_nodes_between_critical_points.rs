@@ -16,20 +16,20 @@ impl Solution {
         let Some(mut head) = head else {
             return vec![-1, -1];
         };
-        let mut prev_val = head.val;
-        let mut curr = head.next.take();
+        let Some(mut curr) = head.next.take() else {
+            return vec![-1, -1];
+        };
+
         let mut index = 1;
+        let mut prev_val = head.val;
 
         let mut first_critical = None::<i32>;
         let mut recent_critical = None::<i32>;
         let mut min_dist = i32::MAX;
-        while let Some(mut node) = curr {
-            let Some(next_node) = node.next.take() else {
-                break;
-            };
 
-            if (node.val < next_node.val && node.val < prev_val)
-                || (node.val > next_node.val && node.val > prev_val)
+        while let Some(next_node) = curr.next.take() {
+            if (curr.val < next_node.val && curr.val < prev_val)
+                || (curr.val > next_node.val && curr.val > prev_val)
             {
                 if let Some(critical) = recent_critical {
                     min_dist = min_dist.min(index - critical);
@@ -39,15 +39,14 @@ impl Solution {
                 recent_critical = Some(index);
             }
 
-            prev_val = node.val;
-            curr = Some(next_node);
+            prev_val = curr.val;
+            curr = next_node;
             index += 1;
         }
 
         match (first_critical, recent_critical) {
-            (Some(f), Some(l)) if f != l => vec![min_dist, l-f],
-            _=> vec![-1, -1]
-            
+            (Some(f), Some(l)) if f != l => vec![min_dist, l - f],
+            _ => vec![-1, -1],
         }
     }
 }
