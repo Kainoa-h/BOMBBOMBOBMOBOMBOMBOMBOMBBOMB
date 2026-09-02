@@ -32,7 +32,7 @@ impl Solution {
                 || (node.val > next_node.val && node.val > prev_val)
             {
                 if let Some(critical) = first_critical {
-                    max_dist = max_dist.max(index - critical);
+                    max_dist = index - critical;
                 } else {
                     first_critical = Some(index);
                 }
