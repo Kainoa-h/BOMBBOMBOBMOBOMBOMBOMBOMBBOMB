@@ -13,18 +13,18 @@ impl ListNode {
 
 impl Solution {
     pub fn nodes_between_critical_points(head: Option<Box<ListNode>>) -> Vec<i32> {
-        let Some(head) = head else {
+        let Some(mut head) = head else {
             return vec![-1, -1];
         };
         let mut prev_val = head.val;
-        let mut curr = head.next.as_deref();
+        let mut curr = head.next.take();
         let mut index = 1;
 
         let mut first_critical = None::<i32>;
         let mut recent_critical = None::<i32>;
         let mut min_dist = i32::MAX;
-        while let Some(node) = curr {
-            let Some(next_node) = node.next.as_deref() else {
+        while let Some(mut node) = curr {
+            let Some(next_node) = node.next.take() else {
                 break;
             };
 
@@ -40,7 +40,7 @@ impl Solution {
             }
 
             prev_val = node.val;
-            curr = node.next.as_deref();
+            curr = Some(next_node);
             index += 1;
         }
 
