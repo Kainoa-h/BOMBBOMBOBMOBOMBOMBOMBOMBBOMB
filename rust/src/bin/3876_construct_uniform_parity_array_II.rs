@@ -8,7 +8,7 @@ impl Solution {
             return false;
         };
 
-        smallest_odd == smallest || nums1.iter().filter(|&&x| x == smallest_odd).count() > 1
+        smallest_odd == smallest || nums1.iter().filter(|&&x| x == smallest_odd).nth(1).is_some()
     }
 }
 
