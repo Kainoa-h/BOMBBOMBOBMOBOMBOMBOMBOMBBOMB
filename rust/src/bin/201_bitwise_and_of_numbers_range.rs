@@ -6,13 +6,14 @@ impl Solution {
             return 0;
         }
 
-        let inter = left & right;
         let mut result = 0;
         for i in (0..(32 - lz)).rev() {
-            if (inter >> i) & 1 != 1 {
+            let l = (left >> i) & 1;
+            let r = (right >> i) & 1;
+            if l != r {
                 break;
             }
-            result |= 1 << i;
+            result |= l << i;
         }
         result
     }
