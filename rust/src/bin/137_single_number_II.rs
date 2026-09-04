@@ -3,17 +3,14 @@ impl Solution {
         let mut bit_count = [0; 32];
         for n in nums {
             for (idx, count) in bit_count.iter_mut().enumerate() {
-                if (n & (1 << idx)).count_ones() == 1 {
-                    *count += 1;
-                }
+                *count += (n >> idx) & 1;
             }
         }
 
         let mut number = 0;
-        for count in bit_count.into_iter().rev() {
-            number <<= 1;
+        for (idx,count) in bit_count.into_iter().enumerate() {
             if count % 3 != 0 {
-                number |= 1;
+                number |= 1 << idx;
             }
         }
         number
