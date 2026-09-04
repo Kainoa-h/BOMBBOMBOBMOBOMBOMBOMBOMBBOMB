@@ -1,19 +1,12 @@
 impl Solution {
     pub fn single_number(nums: Vec<i32>) -> i32 {
-        let mut bit_count = [0; 32];
+        let mut ones = 0;
+        let mut twos = 0;
         for n in nums {
-            for (idx, count) in bit_count.iter_mut().enumerate() {
-                *count += (n >> idx) & 1;
-            }
+            ones = (ones ^ n) & !twos;
+            twos = (twos ^ n) & !ones;
         }
-
-        let mut number = 0;
-        for (idx,count) in bit_count.into_iter().enumerate() {
-            if count % 3 != 0 {
-                number |= 1 << idx;
-            }
-        }
-        number
+        ones
     }
 }
 
