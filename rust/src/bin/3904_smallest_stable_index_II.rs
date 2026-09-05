@@ -1,25 +1,25 @@
 impl Solution {
     pub fn first_stable_index(nums: Vec<i32>, k: i32) -> i32 {
-        let mut postfix = Vec::with_capacity(nums.len());
+        let Some(mut largest) = nums.first().copied() else {
+            return -1;
+        };
 
-        let mut smallest = *nums.last().unwrap();
-        for &n in nums.iter().rev() {
-            smallest = smallest.min(n);
-            postfix.push(smallest);
+        let mut postfix = nums.clone();
+        for i in (1..postfix.len()).rev() {
+            postfix[i - 1] = postfix[i].min(postfix[i - 1]);
         }
-        postfix.reverse();
 
-        let mut largest = *nums.first().unwrap();
-        for (idx, n) in nums.into_iter().enumerate() {
+        for (idx, (n, smallest)) in nums.into_iter().zip(postfix).enumerate() {
             largest = largest.max(n);
-            let smallest = postfix[idx];
-            let score = largest - smallest;
-            if score <= k {
+            if largest - smallest <= k {
                 return idx as i32;
             }
         }
         -1
     }
 }
-
 struct Solution {}
+
+fn main() {
+    Solution::first_stable_index(vec![], 0);
+}
