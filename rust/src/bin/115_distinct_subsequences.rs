@@ -1,39 +1,40 @@
+use std::collections::HashMap;
+
 impl Solution {
     pub fn num_distinct(s: String, t: String) -> i32 {
         let s = s.into_bytes();
         let t = t.into_bytes();
-        let first_char = t[0];
-        fn combinations(s: &[u8], t: &[u8]) -> i32 {
-            println!("- s: {:?}, t: {:?}", str::from_utf8(s), str::from_utf8(t));
-            if t.len() == 1 {
-                let x = s.contains(&t[0]) as i32; 
-                println!("- term {:?}", x);
+        let mut cache = HashMap::<(usize, usize), i32>::new();
+        fn combinations(
+            s_idx: usize,
+            t_idx: usize,
+            s: &[u8],
+            t: &[u8],
+            cache: &mut HashMap<(usize, usize), i32>,
+        ) -> i32 {
+            if t[t_idx..].len() == 1 {
+                let x = s[s_idx..].iter().filter(|&&c| c == t[t_idx]).count() as i32;
                 return x;
             }
 
-            if s.len() == 1 {
-                println!("- term none");
+            if s[s_idx..].len() == 1 {
                 return 0;
             }
 
+            if let Some(&cached) = cache.get(&(s_idx,t_idx)) {
+                return cached
+            }
             let mut calls = 0;
-            for (idx, &c) in s.iter().enumerate() {
-                if c == t[0] {
-                    calls += combinations(&s[idx + 1..], &t[1..]);
+            for (idx, &c) in s.iter().enumerate().skip(s_idx) {
+                if c == t[t_idx] {
+                    let x = combinations(idx + 1, t_idx + 1, s, t, cache);
+                    calls += x;
                 }
             }
+            cache.insert((s_idx,t_idx), calls);
             calls
         }
-
-        let mut distinct = 0;
-        for (idx, &c) in s.iter().enumerate() {
-            if c == first_char {
-                println!("\n\ncall 1:");
-                distinct += combinations(&s[idx..], &t);
-            }
-        }
-
-        distinct
+        combinations(0, 0, &s, &t, &mut cache)
     }
 }
 
