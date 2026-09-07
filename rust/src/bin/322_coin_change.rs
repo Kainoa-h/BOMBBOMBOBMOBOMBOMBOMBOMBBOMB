@@ -1,19 +1,21 @@
+use std::collections::HashSet;
+
 impl Solution {
     pub fn coin_change(mut coins: Vec<i32>, mut amount: i32) -> i32 {
-        let mut coins_used = 0;
-        coins.sort_unstable();
-        while amount > 0
-            && let Some(&coin) = coins.last()
-        {
-            if coin > amount {
-                coins.pop();
-                continue;
+        coins.sort_unstable_by_key(|x| -x);
+        fn change(amt: i32, coins: &[i32]) -> Option<i32> {
+            if amt == 0 {
+                return Some(1);
             }
-            amount -= coin;
-            coins_used +=1;
+            for &coin in coins {
+                if amt >= coin && let Some(x) = change(amt - coin, coins) {
+                    return Some(x + 1);
+                }
+            }
+            None
         }
 
-        if amount == 0 { coins_used } else { -1 }
+        change(amount, &coins).unwrap_or(-1)
     }
 }
 
