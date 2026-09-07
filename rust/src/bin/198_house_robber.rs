@@ -1,15 +1,13 @@
 impl Solution {
     pub fn rob(nums: Vec<i32>) -> i32 {
-        let mut x = 0;
-        let mut y = 0;
-        for (idx, n) in nums.into_iter().enumerate() {
-            if idx % 2 == 0 {
-                x += n;
-            } else {
-                y += n;
-            }
+        let mut dp = vec![0; nums.len()];
+        for idx in 0..dp.len() {
+            //underflow but wtv
+            let prev_prev_now = dp.get(idx - 2).unwrap_or(&0) + nums[idx];
+            let prev = *dp.get(idx-1).unwrap_or(&0);
+            dp[idx] = prev_prev_now.max(prev);
         }
-        x.max(y)
+        dp[nums.len() - 1]
     }
 }
 
