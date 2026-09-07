@@ -2,20 +2,33 @@ use std::collections::HashSet;
 
 impl Solution {
     pub fn coin_change(mut coins: Vec<i32>, mut amount: i32) -> i32 {
-        coins.sort_unstable_by_key(|x| -x);
-        fn change(amt: i32, coins: &[i32]) -> Option<i32> {
-            if amt == 0 {
-                return Some(1);
-            }
-            for &coin in coins {
-                if amt >= coin && let Some(x) = change(amt - coin, coins) {
-                    return Some(x + 1);
-                }
-            }
-            None
+        if amount == 0 {
+            return 0;
         }
 
-        change(amount, &coins).unwrap_or(-1)
+        coins.sort_unstable_by_key(|x| -x);
+        let mut seen_set = HashSet::<i32>::new();
+        let mut stack = vec![amount];
+        let mut depth = 0;
+        while !stack.is_empty() {
+            let mut new_stack = Vec::new();
+            for amt in stack {
+                if amt == 0 {
+                    return depth;
+                }
+
+                for &c in &coins {
+                    let diff = amt - c;
+                    if c <= amt && !seen_set.contains(&diff) {
+                        seen_set.insert(diff);
+                        new_stack.push(diff);
+                    }
+                }
+            }
+            stack = new_stack;
+            depth += 1;
+        }
+        -1
     }
 }
 
