@@ -1,29 +1,20 @@
 impl Solution {
     pub fn word_break(s: String, word_dict: Vec<String>) -> bool {
-        fn find(idx: usize, s: &String, dict: &Vec<String>, cache: &mut Vec<u8>) -> bool {
-            if idx == s.len() {
-                return true;
-            }
-
-            if cache[idx] == 1 {
-                return false;
-            }
-
-            for word in dict {
-                let end = idx + word.len();
-                if s[idx..].len() >= word.len()
-                    && s[idx..end] == word[..]
-                    && find(end, s, dict, cache)
-                {
-                    return true;
+        let mut dp = vec![false; s.len() + 1];
+        dp[0] = true;
+        for end in 1..=s.len() {
+            for word in &word_dict {
+                if end < word.len() {
+                    continue;
+                }
+                let start = end - word.len();
+                if dp[start] && &s[start..end] == word {
+                    dp[end] = true;
+                    break;
                 }
             }
-            cache[idx] = 1;
-            false
         }
-
-        let mut cache = vec![0_u8; s.len()];
-        find(0, &s, &word_dict, &mut cache)
+        dp[s.len()]
     }
 }
 
