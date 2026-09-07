@@ -9,15 +9,17 @@ impl Solution {
                 return false;
             }
 
-            let mut found = false;
             for word in dict {
                 let end = idx + word.len();
-                if !found && s[idx..].len() >= word.len() && s[idx..end] == word[..] {
-                    found |= find(end, s, dict, cache);
+                if s[idx..].len() >= word.len()
+                    && s[idx..end] == word[..]
+                    && find(end, s, dict, cache)
+                {
+                    return true;
                 }
             }
             cache[idx] = 1;
-            found
+            false
         }
 
         let mut cache = vec![0_u8; s.len()];
