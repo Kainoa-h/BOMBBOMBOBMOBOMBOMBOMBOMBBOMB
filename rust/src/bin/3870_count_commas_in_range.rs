@@ -1,10 +1,6 @@
 impl Solution {
     pub fn count_commas(n: i32) -> i32 {
-        if n < 1000 {
-            0
-        } else {
-            n - 1000 + 1
-        }
+        (n as u32).saturating_sub(999) as i32
     }
 }
 
