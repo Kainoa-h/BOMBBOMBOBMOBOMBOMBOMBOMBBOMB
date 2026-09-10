@@ -9,13 +9,19 @@ impl Solution {
             let prev_row = prev_rows.last().unwrap();
             let row = next_rows.first_mut().unwrap();
             for (idx, v) in row.iter_mut().enumerate() {
-                let left = *prev_row.get(idx - 1).unwrap_or(&i32::MAX);
-                let right = *prev_row.get(idx).unwrap_or(&i32::MAX);
-                *v += left.min(right);
+                *v += match idx {
+                    0 => prev_row[0],
+                    idx if idx == prev_row.len() => prev_row[idx - 1],
+                    idx => prev_row[idx].min(prev_row[idx - 1]),
+                }
             }
         }
 
-        triangle.last().map_or(0, |x| *x.iter().min().unwrap_or(&0))
+        triangle
+            .last()
+            .and_then(|x| x.iter().min())
+            .copied()
+            .unwrap_or(0)
     }
 }
 
