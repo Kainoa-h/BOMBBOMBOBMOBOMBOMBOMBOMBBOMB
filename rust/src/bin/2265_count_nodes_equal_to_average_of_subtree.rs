@@ -22,20 +22,14 @@ use std::rc::Rc;
 impl Solution {
     pub fn average_of_subtree(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
         fn search_subtree(root: Option<&Rc<RefCell<TreeNode>>>) -> (i32, i32, i32) {
-            let Some(root) = root else {return (0,0,0)};
+            let Some(root) = root else { return (0, 0, 0) };
             let root = root.borrow();
 
-            let mut sub_tree_sum = root.val;
-            let mut sub_tree_count = 1;
-
-            let left = search_subtree(root.left.as_ref());
-            sub_tree_sum += left.0;
-            sub_tree_count += left.1;
-            let right = search_subtree(root.right.as_ref());
-            sub_tree_sum += right.0;
-            sub_tree_count += right.1;
-
-            let count = left.2 + right.2 + i32::from(sub_tree_sum/sub_tree_count == root.val);
+            let (ls, lc, lr) = search_subtree(root.left.as_ref());
+            let (rs, rc, rr) = search_subtree(root.right.as_ref());
+            let sub_tree_sum = ls + rs + root.val;
+            let sub_tree_count = lc + rc + 1;
+            let count = lr + rr + i32::from(sub_tree_sum / sub_tree_count == root.val);
 
             (sub_tree_sum, sub_tree_count, count)
         }
