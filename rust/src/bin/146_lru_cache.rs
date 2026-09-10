@@ -31,6 +31,9 @@ impl LRUCache {
     }
 
     fn unstich_throw_back(&mut self, entry_idx: usize) {
+        if self.tail == Some(entry_idx) {
+            return;
+        }
         let entry = self.entry_vec[entry_idx];
         if self.head == Some(entry_idx) {
             self.head = entry.next.or(self.tail);
@@ -48,32 +51,18 @@ impl LRUCache {
     }
 
     fn get(&mut self, key: i32) -> i32 {
-        println!("---GET: {}---", key);
-        println!("{:?}", self.entry_vec);
-        println!("{:?}", self.map);
-        println!("head {:?}, tail {:?}", self.head, self.tail);
         let Some(&entry_idx) = self.map.get(&key) else {
-            println!("---NOT FOUND---\n");
             return -1;
         };
         if self.head == self.tail {
-            println!("---ONLY ONE---\n");
             return self.entry_vec[self.head.unwrap()].value;
         }
         self.unstich_throw_back(entry_idx);
 
-        println!("{:?}", self.entry_vec);
-        println!("{:?}", self.map);
-        println!("head {:?}, tail {:?}", self.head, self.tail);
-        println!("---END---\n");
         self.entry_vec[entry_idx].value
     }
 
     fn put(&mut self, key: i32, value: i32) {
-        println!("---PUT: {}---", key);
-        println!("{:?}", self.entry_vec);
-        println!("{:?}", self.map);
-        println!("head {:?}, tail {:?}", self.head, self.tail);
         
         if let Some(&entry_idx) = self.map.get(&key) {
             self.entry_vec[entry_idx].value = value;
@@ -92,27 +81,15 @@ impl LRUCache {
             self.map.insert(key, self.len);
             self.tail = Some(self.len);
             self.len += 1;
-            println!("{:?}", self.entry_vec);
-            println!("{:?}", self.map);
-            println!("head {:?}, tail {:?}", self.head, self.tail);
-            println!("---END_INSERT---\n");
             return;
         }
 
         if self.head == self.tail && self.map.contains_key(&key) {
-            println!("{:?}", self.entry_vec);
-            println!("{:?}", self.map);
-            println!("head {:?}, tail {:?}", self.head, self.tail);
-            println!("---END_NO_CHANGE---\n");
             return;
         }
 
         if let Some(&entry_idx) = self.map.get(&key) {
             self.unstich_throw_back(entry_idx);
-            println!("{:?}", self.entry_vec);
-            println!("{:?}", self.map);
-            println!("head {:?}, tail {:?}", self.head, self.tail);
-            println!("---MOVE_BACK---\n");
             return;
         }
 
@@ -135,10 +112,6 @@ impl LRUCache {
             self.entry_vec[tail].next = Some(old_entry_idx);
         }
         self.tail = Some(old_entry_idx);
-        println!("{:?}", self.entry_vec);
-        println!("{:?}", self.map);
-        println!("head {:?}, tail {:?}", self.head, self.tail);
-        println!("---END_REPLACE---\n");
     }
 }
 
