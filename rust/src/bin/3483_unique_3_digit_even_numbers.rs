@@ -1,19 +1,22 @@
 impl Solution {
     pub fn total_numbers(digits: Vec<i32>) -> i32 {
-        let bucket = digits.into_iter().fold([0; 10], |mut acc, x| {
-            acc[x as usize] += 1;
-            acc
-        });
-
+        let n = digits.len();
+        let mut seen = [false; 1000];
         let mut count = 0;
-        for i in (100..1000).step_by(2) {
-            let mut n = i;
-            let mut b = [0;10];
-            for _ in 0..3 {
-                b[(n % 10) as usize] += 1;
-                n /= 10;
+        for ia in 0..n {
+            if digits[ia] == 0 { continue; }
+
+            for ib in 0..n {
+                if ib == ia { continue; }
+
+                for ic in 0..n {
+                    if ic == ia || ic == ib || digits[ic] % 2 != 0 { continue; }
+
+                    let num = (digits[ia] * 100 + digits[ib] * 10 + digits[ic]) as usize;
+                    count += i32::from(!seen[num]);
+                    seen[num] = true;
+                }
             }
-            count += i32::from(b.iter().zip(&bucket).all(|(c, t)| c <= t));
         }
         count
     }
