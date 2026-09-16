@@ -3,16 +3,16 @@ use std::collections::HashSet;
 impl Solution {
     pub fn longest_consecutive(nums: Vec<i32>) -> i32 {
         let set = HashSet::<i32>::from_iter(nums);
-        let starting_nums = set.iter().filter(|&x| set.contains(&(x - 1)));
-        let mut longest = 0;
-        for &s in starting_nums {
-            let mut n = s + 1;
-            while set.contains(&n) {
-                n += 1;
-            }
-            longest = longest.max(n - s);
-        }
-        longest
+        set.iter()
+            .filter(|&x| !set.contains(&(x - 1)))
+            .map(|x| {
+                (x + 1..i32::MAX)
+                    .take_while(|n| set.contains(n))
+                    .last()
+                    .map_or(1, |r| r - x + 1)
+            })
+            .max()
+            .unwrap_or(0)
     }
 }
 
