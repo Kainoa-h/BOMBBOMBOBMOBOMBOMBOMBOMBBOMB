@@ -1,25 +1,23 @@
 impl Solution {
     pub fn can_partition(nums: Vec<i32>) -> bool {
-        let sum = nums.iter().sum::<i32>();
-        if sum % 2 != 0 {
+        let sum = nums.iter().sum::<i32>() as usize;
+        if !sum.is_multiple_of(2) {
             return false;
         }
-        let half = sum/2;
-        let mut dp = vec![false; half as usize + 1];
+        let half = sum / 2;
+        let mut dp = vec![false; half + 1];
         dp[0] = true;
         for n in nums {
             let n = n as usize;
-            for i in (0..dp.len()).rev() {
-                if dp[i] && let Some(x) = dp.get_mut(i + n) {
-                    *x = true;
-                }
+            for i in (n..dp.len()).rev() {
+                dp[i] |= dp[i - n];
             }
-            if dp[half as usize] {
-                break;
+            if dp[half] {
+                return true;
             }
         }
 
-        dp[half as usize]
+        dp[half]
     }
 }
 
