@@ -23,20 +23,22 @@ use std::cell::RefCell;
 use std::rc::Rc;
 impl Solution {
     pub fn get_minimum_difference(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-        fn in_order(node: &Rc<RefCell<TreeNode>>) -> Vec<i32> {
+        fn in_order(node: &Rc<RefCell<TreeNode>>, prev: &mut Option<i32>, min: &mut i32){
             let node = node.borrow();
-            let mut v = Vec::new();
             if let Some(left) = node.left.as_ref() {
-                v.append(&mut in_order(left));
+                in_order(left, prev, min);
             }
-            v.push(node.val);
+            if let Some(p) = *prev {
+                *min = (*min).min(node.val - p);
+            }
+            *prev = Some(node.val);
             if let Some(right) = node.right.as_ref() {
-                v.append(&mut in_order(right));
+                in_order(right, prev, min);
             }
-            v
         }
-        let vec = in_order(root.as_ref().unwrap());
-
-        vec.windows(2).map(|x| x[1] - x[0]).min().unwrap_or(0)
+        let mut min = i32::MAX;
+        let mut prev = None;
+        in_order(root.as_ref().unwrap(), &mut prev, &mut min);
+        min
     }
 }
