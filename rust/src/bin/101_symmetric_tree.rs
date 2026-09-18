@@ -23,35 +23,25 @@ use std::cell::RefCell;
 use std::rc::Rc;
 impl Solution {
     pub fn is_symmetric(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
-        let root = root.as_ref().unwrap().borrow();
-        let (left, right) = match (&root.left, &root.right) {
-            (None, None) => return true,
-            (Some(l), Some(r)) => (l, r),
-            _ => return false,
-        };
-
-        fn check(left: &Rc<RefCell<TreeNode>>, right: &Rc<RefCell<TreeNode>>) -> bool {
-            let (l, r) = (left.borrow(), right.borrow());
-            if l.val != r.val {
-                return false;
+        fn check(
+            left: Option<&Rc<RefCell<TreeNode>>>,
+            right: Option<&Rc<RefCell<TreeNode>>>,
+        ) -> bool {
+            match (left, right) {
+                (None, None) => true,
+                (None, Some(_)) | (Some(_), None) => false,
+                (Some(l), Some(r)) => {
+                    let (l, r) = (l.borrow(), r.borrow());
+                    l.val == r.val
+                        && check(l.left.as_ref(), r.right.as_ref())
+                        && check(l.right.as_ref(), r.left.as_ref())
+                }
             }
-
-            let check_out = match (l.left.as_ref(), r.right.as_ref()) {
-                (None, None) => true,
-                (Some(ll), Some(rr)) => check(ll, rr),
-                _ => false,
-            };
-            
-            let check_in = match (l.right.as_ref(), r.left.as_ref()) {
-                (None, None) => true,
-                (Some(lr), Some(rl)) => check(lr, rl),
-                _ => false,
-            };
-
-            check_out && check_in
         }
-
-        check(left, right)
+        
+        match root {
+            None => true,
+            Some(r) => check(r.borrow().left.as_ref(), r.borrow().right.as_ref())
+        }
     }
 }
-
