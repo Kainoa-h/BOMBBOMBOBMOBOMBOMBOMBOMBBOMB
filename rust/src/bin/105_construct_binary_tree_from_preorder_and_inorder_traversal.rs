@@ -23,18 +23,12 @@ use std::rc::Rc;
 impl Solution {
     pub fn build_tree(preorder: Vec<i32>, inorder: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
         fn build(preorder: &[i32], inorder: &[i32]) -> Option<Rc<RefCell<TreeNode>>> {
-            for (pre_i, &x) in preorder.iter().enumerate() {
-                for (in_i, &y) in inorder.iter().enumerate() {
-                    if x != y {
-                        continue;
-                    }
-                    let mut node = TreeNode::new(x);
-                    node.left = build(&preorder[pre_i + 1..], &inorder[..in_i]);
-                    node.right = build(&preorder[pre_i + 1..], &inorder[in_i + 1..]);
-                    return Some(Rc::new(RefCell::new(node)))
-                }
-            }
-            None
+            let (&n, preorder) = preorder.split_first()?;
+            let mut node = TreeNode::new(n);
+            let split_idx = inorder.iter().position(|&x| x == n)?;
+            node.left = build(&preorder[..split_idx], &inorder[..split_idx]);
+            node.right = build(&preorder[split_idx..], &inorder[split_idx + 1..]);
+            Some(Rc::new(RefCell::new(node)))
         }
 
         build(&preorder, &inorder)
