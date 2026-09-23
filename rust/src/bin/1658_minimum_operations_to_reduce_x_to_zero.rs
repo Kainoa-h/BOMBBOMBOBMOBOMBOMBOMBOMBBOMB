@@ -1,28 +1,33 @@
 impl Solution {
     pub fn min_operations(nums: Vec<i32>, x: i32) -> i32 {
         let len = nums.len();
-        let mut outside = nums.iter().sum::<i32>();
-        
-        if outside == x {
-            return 0;
+        let total = nums.iter().sum::<i32>();
+        let target = total - x;
+        if target < 0 {
+            return -1;
         }
-
+        if target == 0 {
+            return len as i32;
+        }
+        let mut max_len = 0;
+        let mut sum = 0;
         let mut start = 0;
-        let mut min_ops = None::<i32>;
         for (end, &n) in nums.iter().enumerate() {
-            outside -= n;
-            while start < end && outside < x {
-                println!("while remove! out:{}, ", outside);
-                outside += nums[start];
+            sum += n;
+            while sum > target {
+                sum -= nums[start];
                 start += 1;
             }
-            if outside == x {
-                let x = (len - end + start - 1) as i32;
-                println!("found! curr min_ops {:?}, x {:?}, start, end {},{}", min_ops, x, start, end);
-                min_ops = Some(min_ops.map_or(x, |m| m.min(x)));
+            if sum == target {
+                max_len = max_len.max(end - start + 1);
             }
         }
-        min_ops.unwrap_or(-1)
+
+        if max_len == 0 {
+            -1
+        } else {
+            (len - max_len) as i32
+        }
     }
 }
 
