@@ -1,15 +1,18 @@
 impl Solution {
     pub fn smallest_index(nums: Vec<i32>) -> i32 {
-        for (idx, mut num) in nums.into_iter().enumerate() {
+        nums.into_iter().enumerate().find_map(|(idx, mut num)| {
             let mut sum = 0;
             while num > 0 {
                 sum += num % 10;
                 num /= 10;
             }
             if sum as usize == idx {
-                return idx as i32;
+                Some(idx as i32)
+            } else {
+                None
             }
-        }
-        -1
+        }).unwrap_or(-1)
     }
 }
+
+struct Solution {}
