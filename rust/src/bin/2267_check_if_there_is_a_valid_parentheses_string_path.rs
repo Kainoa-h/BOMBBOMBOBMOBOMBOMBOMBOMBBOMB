@@ -3,6 +3,9 @@ use std::collections::HashSet;
 impl Solution {
     pub fn has_valid_path(grid: Vec<Vec<char>>) -> bool {
         let (rows, cols) = (grid.len(), grid[0].len());
+        if (rows + cols - 1) % 2 != 0 || grid[0][0] == ')' || grid[rows - 1][cols - 1] == '(' {
+            return false;
+        }
         let mut dp = vec![HashSet::new(); cols + 1];
         dp[0].insert(0);
 
@@ -14,14 +17,14 @@ impl Solution {
                 //above
                 for &n in &dp[c + 1] {
                     let x = n + opr;
-                    if x <= dist {
+                    if (0..=dist).contains(&x) {
                         new_set.insert(x);
                     }
                 }
                 //left
                 for &n in &dp[c] {
                     let x = n + opr;
-                    if x <= dist {
+                    if (0..=dist).contains(&x) {
                         new_set.insert(x);
                     }
                 }
