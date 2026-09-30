@@ -1,14 +1,19 @@
 impl Solution {
     pub fn max_depth_after_split(seq: String) -> Vec<i32> {
-        let mut result = vec![0; seq.len()];
-        for x in seq.chars().enumerate().filter(|x| x.1 == '(').step_by(2) {
-            result[x.0] = 1;
-        }
-        for x in seq.chars().enumerate().filter(|x| x.1 == ')').step_by(2) {
-            result[x.0] = 1;
-        }
-
-        result
+        seq.bytes()
+            .scan(0, |depth, byte| match byte {
+                b'(' => {
+                    let bin = *depth % 2;
+                    *depth += 1;
+                    Some(bin)
+                }
+                b')' => {
+                    *depth -= 1;
+                    Some(*depth % 2)
+                }
+                _ => unreachable!(),
+            })
+            .collect()
     }
 }
 
