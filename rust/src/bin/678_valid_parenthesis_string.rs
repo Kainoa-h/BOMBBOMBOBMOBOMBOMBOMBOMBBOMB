@@ -1,32 +1,27 @@
 impl Solution {
     pub fn check_valid_string(s: String) -> bool {
-        let mut parity = 0;
-        let mut extra_lifes = 0;
-        let mut extra_lifes_since = 0;
+        let mut min_open = 0_u32;
+        let mut max_open = 0_i32;
         for c in s.chars() {
             match c {
-                '(' => parity += 1,
+                '(' => {
+                    max_open += 1;
+                    min_open += 1;
+                }
                 ')' => {
-                    parity -= 1;
-                    if parity < 0 {
-                        if extra_lifes > 0 {
-                            parity = 0;
-                            extra_lifes -= 1;
-                        } else {
-                            return false;
-                        }
+                    min_open = min_open.saturating_sub(1);
+                    max_open -= 1;
+                    if max_open < 0 {
+                        return false;
                     }
                 },
                 _ => {
-                    extra_lifes += 1;
-                    extra_lifes_since += 1;
+                    min_open = min_open.saturating_sub(1);
+                    max_open += 1;
                 }
             }
-            if parity == 0 {
-                extra_lifes_since = 0;
-            }
         }
-        parity == 0 || extra_lifes_since >= parity
+        min_open == 0
     }
 }
 
