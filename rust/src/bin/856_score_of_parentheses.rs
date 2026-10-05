@@ -9,7 +9,7 @@ impl Solution {
                 _ => {
                     depth -= 1;
                     if idx > 0 && bytes[idx - 1] == b'(' {
-                        score += 1 * 2_i32.pow(depth);
+                        score += 1 << depth;
                     }
                 }
             }
