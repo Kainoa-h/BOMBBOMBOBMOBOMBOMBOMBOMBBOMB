@@ -1,19 +1,20 @@
 impl Solution {
     pub fn score_of_parentheses(s: String) -> i32 {
-        let mut stack = Vec::with_capacity(s.len());
-        for ch in s.chars() {
-            if ch == '(' {
-                stack.push(0);
-                continue;
+        let bytes = s.as_bytes();
+        let mut depth = 0;
+        let mut score = 0;
+        for (idx, &b) in bytes.iter().enumerate() {
+            match b {
+                b'(' => depth += 1,
+                _ => {
+                    depth -= 1;
+                    if idx > 0 && bytes[idx - 1] == b'(' {
+                        score += 1 * 2_i32.pow(depth);
+                    }
+                }
             }
-            let mut score = 0;
-            while let Some(x) = stack.pop() && x != 0 {
-                score += x;
-            }
-            score *= 2;
-            stack.push(score.max(1));
         }
-        stack.iter().sum()
+        score
     }
 }
 
