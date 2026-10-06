@@ -1,19 +1,11 @@
 impl Solution {
     pub fn min_add_to_make_valid(s: String) -> i32 {
-        let state = s.chars().fold((0, 0), |mut state, c| {
-            match c {
-                '(' => state.0 += 1,
-                _ => {
-                    if state.0 > 0 {
-                        state.0 -= 1;
-                    } else {
-                        state.1 += 1;
-                    }
-                }
-            }
-            state
+        let (open, needed) = s.chars().fold((0, 0), |(open, needed), c| match c {
+            '(' => (open + 1, needed),
+            _ if open > 0 => (open - 1, needed),
+            _ => (open, needed + 1),
         });
-        state.0 + state.1
+        open + needed
     }
 }
 
