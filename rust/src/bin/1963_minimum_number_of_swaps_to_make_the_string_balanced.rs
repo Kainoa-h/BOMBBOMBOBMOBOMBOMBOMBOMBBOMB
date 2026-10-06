@@ -1,14 +1,15 @@
 impl Solution {
     pub fn min_swaps(s: String) -> i32 {
-        s.as_bytes()
-            .iter()
-            .fold((0, 0_u32), |(open, errors), b| match b {
-                b'[' => (open + 1, errors),
-                _ if open > 0 => (open - 1, errors),
-                _ => (open, errors + 1),
-            })
-            .1
-            .div_ceil(2) as i32
+        let mut open = 0;
+        let mut max_diff = 0;
+        for &c in s.as_bytes() {
+            match c {
+                b'[' => open += 1,
+                _ => open -= 1
+            }
+            max_diff = max_diff.min(open);
+        }
+        (-max_diff + 1) / 2
     }
 }
 
