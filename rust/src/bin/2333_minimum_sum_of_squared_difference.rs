@@ -10,11 +10,11 @@ impl Solution {
             .collect::<BinaryHeap<_>>();
 
         while moves > 0 {
-            let x = heap.pop().unwrap();
-            if x == 0 {
+            let mut x = heap.peek_mut().unwrap();
+            if *x == 0 {
                 break;
             }
-            heap.push(x - 1);
+            *x -= 1;
             moves -= 1;
         }
 
