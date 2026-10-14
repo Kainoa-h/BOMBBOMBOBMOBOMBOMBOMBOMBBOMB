@@ -1,27 +1,18 @@
 impl Solution {
     pub fn max_sum_of_squares(mut num: i32, mut sum: i32) -> String {
-        let mut result = String::new();
-        while num > 0 && sum > 0 {
-            if sum > 9 {
-                result.push('9');
-                sum -= 9;
-            } else {
-                result.push_str(&sum.to_string());
-                sum = 0;
-            }
-
-            num -= 1;
-        }
-
-        if sum > 0 {
+        if sum > 9 * num {
             return String::new();
         }
 
-        for _ in 0..num {
-            result.push('0');
-            
+        let mut result = String::with_capacity(num as usize);
+        let nines = sum / 9;
+        let remain = sum % 9;
+        (0..nines).for_each(|_| result.push('9'));
+        if remain > 0 {
+            result.push((b'0' + remain as u8) as char);
         }
-        
+        (result.len()..num as usize).for_each(|_| result.push('0'));
+
         result
     }
 }
