@@ -1,30 +1,21 @@
 impl Solution {
     pub fn min_operations(nums: Vec<i32>) -> i32 {
         let n = nums.len();
-        if n == 2 {
-            return i32::from(nums[0] > nums[1]);
+        let Some(zero) = nums.iter().position(|&x| x == 0) else {
+            return -1;
+        };
+        let is_cont = |s1: &[i32], s2: &[i32], d: i32| {
+            s1.windows(2).all(|w| w[0] - w[1] == d) && s2.windows(2).all(|w| w[0] - w[1] == d)
+        };
+        let asc = is_cont(&nums[0..zero], &nums[zero..], -1);
+        let desc = is_cont(&nums[0..=zero], &nums[zero + 1..], 1);
+
+        if asc {
+            return usize::min(zero, n - zero + 2) as i32;
         }
-        let acs = nums
-            .chunk_by(|&a, &b| a + 1 == b)
-            .map(|c| c.len())
-            .collect::<Vec<_>>();
-        let desc = nums
-            .chunk_by(|&a, &b| a - 1 == b)
-            .map(|c| c.len())
-            .collect::<Vec<_>>();
-        if acs.len() == 1 {
-            return 0;
-        }
-        if desc.len() == 1 {
-            return 1;
-        }
-        if acs.len() == 2 {
-            let zero_pos = acs[0];
-            return usize::min(zero_pos, n - zero_pos + 2) as i32;
-        }
-        if desc.len() == 2 {
-            let last_pos = desc[0];
-            return usize::min(last_pos + 1, n - last_pos + 1) as i32;
+
+        if desc {
+            return usize::min(zero + 2, n - zero) as i32;
         }
 
         -1
