@@ -5,30 +5,28 @@ impl Solution {
         arrive_bob: String,
         leave_bob: String,
     ) -> i32 {
-        const DAYS_IN_MTHS: [i32; 13] = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-        let days_prefix = DAYS_IN_MTHS
-            .iter()
-            .scan(0, |acc, &x| {
-                *acc += x;
-                Some(*acc)
-            })
-            .collect::<Vec<i32>>();
-        let to_days = |x: String| {
-            let mth = x[0..2].parse::<usize>().unwrap();
-            let day = x[3..5].parse::<i32>().unwrap();
-            days_prefix[mth - 1] + day
-        };
-        let arrive_alice = to_days(arrive_alice);
-        let leave_alice = to_days(leave_alice);
-        let arrive_bob = to_days(arrive_bob);
-        let leave_bob = to_days(leave_bob);
-        let start = arrive_alice.max(arrive_bob);
-        let end = leave_alice.min(leave_bob);
-        if end < start {
-            0
-        } else {
-            end - start + 1
+        const fn compute_prefix() -> [i32;13] {
+            const DAYS_IN_MTHS: [i32; 13] = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            let mut prefix = [0;13];
+            let mut i = 1;
+            let mut sum = 0;
+            while i < 13 {
+                prefix[i] = sum;
+                sum += DAYS_IN_MTHS[i];
+                i+=1;
+            }
+            prefix
         }
+        const DAYS_PREFIX: [i32;13] = compute_prefix();
+        let to_days = |x: &str| {
+            let b = x.as_bytes();
+            let mth = ((b[0] - b'0') * 10 + b[1] - b'0') as usize;
+            let day = ((b[3] - b'0') * 10 + b[4] - b'0') as i32;
+            DAYS_PREFIX[mth] + day
+        };
+        let start = to_days(&arrive_alice).max(to_days(&arrive_bob));
+        let end = to_days(&leave_alice).min(to_days(&leave_bob));
+        (end - start + 1).max(0)
     }
 }
 
