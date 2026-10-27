@@ -3,12 +3,8 @@ impl Solution {
         let (m , n) = (m as usize, n as usize);
         let mut result = Vec::with_capacity(m);
         result.push(".".repeat(n));
-        for _ in 1..m {
-            let mut s = "#".repeat(n-1);
-            s.push('.');
-            result.push(s);
-        }
-
+        let s = format!("{}.", "#".repeat(n-1));
+        result.resize(m, s);
         result
     }
 }
