@@ -1,13 +1,16 @@
 use std::ops::BitOrAssign;
 
 const MAX_VALUE: usize = 1024;
+const WORD_LEN: usize = 64;
+const WORDS: usize = MAX_VALUE / WORD_LEN;
 
-struct Mask([bool; MAX_VALUE]);
+struct Mask([u64; WORDS]);
 
 impl From<i32> for Mask {
     fn from(value: i32) -> Self {
+        let value = value as usize;
         let mut new = Mask::new();
-        new.0[value as usize] = true;
+        new.0[value / WORD_LEN] = 1_u64 << (value % 64);
         new
     }
 }
