@@ -1,32 +1,64 @@
-use std::collections::HashSet;
+const MAX_VALUE: usize = 1024;
+
+#[derive(Clone)]
+struct Mask([bool; MAX_VALUE]);
+
+impl From<i32> for Mask {
+    fn from(value: i32) -> Self {
+        let mut new = Mask::new();
+        new.0[value as usize] = true;
+        new
+    }
+}
+
+impl Mask {
+    fn new() -> Self {
+        Mask([false; MAX_VALUE])
+    }
+
+    fn xor(&self, n: i32) -> Mask {
+        let mut result = Mask::new();
+        for (idx, _) in self.0.iter().enumerate().filter(|x| *x.1) {
+            result.0[idx ^ n as usize] = true;
+        }
+        result
+    }
+
+    fn self_or(&mut self, m: Mask) {
+        for (s, x) in self.0.iter_mut().zip(m.0) {
+            *s |= x;
+        }
+    }
+
+    fn smallest(&self) -> i32 {
+        match self.0.iter().position(|&x| x) {
+            Some(x) => x as i32,
+            None => unreachable!(),
+        }
+    }
+}
 
 impl Solution {
     pub fn min_cost(grid: Vec<Vec<i32>>) -> i32 {
-        let (rows, cols) = (grid.len(), grid[0].len());
+        let cols = grid[0].len();
         let mut dp = grid[0]
             .iter()
             .scan(0, |acc, &x| {
                 *acc ^= x;
-                Some(HashSet::from([*acc as i16]))
+                Some(Mask::from(*acc))
             })
             .collect::<Vec<_>>();
         for row in grid.iter().skip(1) {
             for (idx, &cell) in row.iter().enumerate() {
-                let cell = cell as i16;
-                let mut set = HashSet::new();
+                dp[idx] = dp[idx].xor(cell);
                 if idx != 0 {
-                    for &n in &dp[idx - 1] {
-                        set.insert(n ^ cell);
-                    }
+                    let t = dp[idx - 1].xor(cell);
+                    dp[idx].self_or(t);
                 }
-                for &n in &dp[idx] {
-                    set.insert(n ^ cell);
-                }
-                dp[idx] = set;
             }
         }
 
-        *dp[cols - 1].iter().min().unwrap() as i32
+        dp[cols - 1].smallest()
     }
 }
 
