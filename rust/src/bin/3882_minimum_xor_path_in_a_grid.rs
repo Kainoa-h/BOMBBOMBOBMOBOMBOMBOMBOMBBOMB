@@ -1,6 +1,7 @@
+use std::ops::BitOrAssign;
+
 const MAX_VALUE: usize = 1024;
 
-#[derive(Clone)]
 struct Mask([bool; MAX_VALUE]);
 
 impl From<i32> for Mask {
@@ -8,6 +9,14 @@ impl From<i32> for Mask {
         let mut new = Mask::new();
         new.0[value as usize] = true;
         new
+    }
+}
+
+impl BitOrAssign<&Mask> for Mask {
+    fn bitor_assign(&mut self, rhs: &Mask) {
+        for (s, &x) in self.0.iter_mut().zip(rhs.0.iter()) {
+            *s |= x;
+        }
     }
 }
 
@@ -22,12 +31,6 @@ impl Mask {
             result.0[idx ^ n as usize] = true;
         }
         result
-    }
-
-    fn self_or(&mut self, m: Mask) {
-        for (s, x) in self.0.iter_mut().zip(m.0) {
-            *s |= x;
-        }
     }
 
     fn smallest(&self) -> i32 {
@@ -50,11 +53,11 @@ impl Solution {
             .collect::<Vec<_>>();
         for row in grid.iter().skip(1) {
             for (idx, &cell) in row.iter().enumerate() {
-                dp[idx] = dp[idx].xor(cell);
                 if idx != 0 {
-                    let t = dp[idx - 1].xor(cell);
-                    dp[idx].self_or(t);
+                    let (left, top) = dp.split_at_mut(idx);
+                    top[0] |= &left[idx - 1];
                 }
+                dp[idx] = dp[idx].xor(cell);
             }
         }
 
