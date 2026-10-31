@@ -17,6 +17,9 @@ impl Solution {
         p_queue.push(Reverse((0, 1, Reverse(0))));
 
         while let Some(Reverse((weight, conseq, Reverse(node)))) = p_queue.pop() {
+            if node == len - 1 {
+                return weight;
+            }
             for &(next, n_weight) in &adj_list[node] {
                 let conseq = if b[next] == b[node] { conseq + 1 } else { 1 };
                 if conseq > k {
@@ -30,12 +33,7 @@ impl Solution {
             }
         }
 
-        distances[len - 1]
-            .iter()
-            .filter(|&&x| x != i32::MAX)
-            .min()
-            .cloned()
-            .unwrap_or(-1)
+        -1
     }
 }
 
