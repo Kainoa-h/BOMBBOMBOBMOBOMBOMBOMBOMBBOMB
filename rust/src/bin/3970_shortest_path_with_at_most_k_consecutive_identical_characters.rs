@@ -14,9 +14,9 @@ impl Solution {
         let mut distances = vec![vec![i32::MAX; k + 1]; len];
         distances[0].fill(0);
         let mut p_queue = BinaryHeap::new();
-        p_queue.push(Reverse((0, 0, 1)));
+        p_queue.push(Reverse((0, 1, Reverse(0))));
 
-        while let Some(Reverse((node, weight, conseq))) = p_queue.pop() {
+        while let Some(Reverse((weight, conseq, Reverse(node)))) = p_queue.pop() {
             for &(next, n_weight) in &adj_list[node] {
                 let conseq = if b[next] == b[node] { conseq + 1 } else { 1 };
                 if conseq > k {
@@ -25,7 +25,7 @@ impl Solution {
                 let tot_weight = weight + n_weight;
                 if distances[next][conseq] > tot_weight {
                     distances[next][conseq] = tot_weight;
-                    p_queue.push(Reverse((next, tot_weight, conseq)));
+                    p_queue.push(Reverse((tot_weight, conseq, Reverse(next))));
                 }
             }
         }
