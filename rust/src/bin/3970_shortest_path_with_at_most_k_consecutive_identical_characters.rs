@@ -2,20 +2,33 @@ use std::{cmp::Reverse, collections::BinaryHeap};
 
 impl Solution {
     pub fn shortest_path(n: i32, edges: Vec<Vec<i32>>, labels: String, k: i32) -> i32 {
-        let k = k as usize;
         let len = n as usize;
-        let mut adj_head = vec![None::<usize>; len];
-        let mut adj_next = vec![None::<usize>; edges.len()];
+        let k = (k as usize).min(len);
+
+        let mut degrees = edges.iter().fold(vec![0; len], |mut degrees, edge| {
+            degrees[edge[0] as usize] += 1;
+            degrees
+        });
+
+        let prefix_partitions = degrees
+            .iter()
+            .scan(0, |acc, edges| {
+                let prefix = *acc;
+                *acc += edges;
+                Some(prefix)
+            })
+            .chain(std::iter::once(edges.len()))
+            .collect::<Vec<_>>();
+
         let mut adj_target = vec![0_usize; edges.len()];
         let mut adj_weight = vec![0_i32; edges.len()];
 
-        for (e_idx, edge) in edges.iter().enumerate() {
+        for edge in &edges {
             let (from, to, weight) = (edge[0] as usize, edge[1] as usize, edge[2]);
-            adj_target[e_idx] = to;
-            adj_weight[e_idx] = weight;
-
-            adj_next[e_idx] = adj_head[from];
-            adj_head[from] = Some(e_idx);
+            degrees[from] -= 1;
+            let idx = prefix_partitions[from] + degrees[from];
+            adj_target[idx] = to;
+            adj_weight[idx] = weight;
         }
 
         let b = labels.into_bytes();
@@ -32,11 +45,11 @@ impl Solution {
             if node == len - 1 {
                 return weight;
             }
-            let mut e_idx = adj_head[node];
-            while let Some(e) = e_idx {
-                e_idx = adj_next[e];
+            let (start, end) = (prefix_partitions[node], prefix_partitions[node + 1]);
+            let curr_label = b[node];
+            for e in start..end {
                 let (target, n_weight) = (adj_target[e], adj_weight[e]);
-                let conseq = if b[target] == b[node] { conseq + 1 } else { 0 };
+                let conseq = if b[target] == curr_label { conseq + 1 } else { 0 };
                 if conseq == k {
                     continue;
                 }
