@@ -10,32 +10,34 @@ class Solution {
     Arrays.sort(sortedQueriesIndexes, (a, b) -> Integer.compare(queries[a], queries[b]));
 
     int[] queryResults = new int[queries.length];
-    int pointer = 0;
-    {
-      int firstStart = queries[sortedQueriesIndexes[0]] - x;
-      while (logs[pointer][1] < firstStart) {
-        pointer++;
-      }
-    }
-    var nextStartPointer = pointer;
-    for (var i = 0; i < sortedQueriesIndexes.length; i++) {
-      var qIdx = sortedQueriesIndexes[i];
+    int[] serverBucketCount = new int[n + 1];
+    int serversInWindow = 0;
+    var left = 0;
+    var right = 0;
+
+    for (var qIdx: sortedQueriesIndexes) {
       var end = queries[qIdx];
       var start = end - x;
-      Integer nextStart = null;
-      if (i < sortedQueriesIndexes.length - 1) {
-        nextStart = queries[sortedQueriesIndexes[i + 1]] - x;
-      }
-      Set<Integer> set = new HashSet<>();
-      while (pointer < logs.length && logs[pointer][1] >= start && logs[pointer][1] <= end) {
-        set.add(logs[pointer][0]);
-        if (nextStart != null && logs[pointer][1] < nextStart) {
-          nextStartPointer++;
+
+      while (right < logs.length && logs[right][1] <= end) {
+        var server = logs[right][0];
+        serverBucketCount[server]++;
+        if (serverBucketCount[server] == 1) {
+          serversInWindow++;
         }
-        pointer++;
+        right++;
       }
-      queryResults[qIdx] = n - set.size();
-      pointer = nextStartPointer;
+
+      while (left < logs.length && logs[left][1] < start) {
+        var server = logs[left][0];
+        serverBucketCount[server]--;
+        if (serverBucketCount[server] == 0) {
+          serversInWindow--;
+        }
+        left++;
+      }
+
+      queryResults[qIdx] = n - serversInWindow;
     }
 
     return queryResults;
