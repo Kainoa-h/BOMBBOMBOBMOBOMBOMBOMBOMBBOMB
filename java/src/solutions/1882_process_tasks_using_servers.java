@@ -1,7 +1,7 @@
 import java.util.*;
 
 class Solution {
-  private static class Server implements Comparable<Server> {
+  private static class Server {
     public final int id;
     public final int weight;
     public int time;
@@ -11,22 +11,17 @@ class Solution {
       this.weight = weight;
       this.time = 0;
     }
-
-    private static final Comparator<Server> C = Comparator
-        .comparingInt((Server s) -> s.time)
-        .thenComparingInt(s -> s.weight)
-        .thenComparingInt(s -> s.id);
-
-    @Override
-    public int compareTo(Solution.Server o) {
-      return C.compare(this, o);
-    }
   }
 
   public int[] assignTasks(int[] servers, int[] tasks) {
     int[] result = new int[tasks.length];
-    PriorityQueue<Server> freeServersPQ = new PriorityQueue<>();
-    PriorityQueue<Server> busyServersPQ = new PriorityQueue<>();
+    PriorityQueue<Server> freeServersPQ = new PriorityQueue<>((a, b) -> {
+      if (a.weight != b.weight) {
+        return a.weight - b.weight;
+      }
+      return a.id - b.id;
+    });
+    PriorityQueue<Server> busyServersPQ = new PriorityQueue<>((a, b) -> a.time - b.time);
     for (int i = 0; i < servers.length; i++) {
       freeServersPQ.add(new Server(i, servers[i]));
     }
@@ -35,9 +30,7 @@ class Solution {
     int seconds = 0;
     while (idx < tasks.length) {
       while (!busyServersPQ.isEmpty() && busyServersPQ.peek().time <= seconds) {
-        Server s = busyServersPQ.poll();
-        s.time = 0;
-        freeServersPQ.add(s);
+        freeServersPQ.add(busyServersPQ.poll());
       }
 
       if (freeServersPQ.isEmpty()) {
