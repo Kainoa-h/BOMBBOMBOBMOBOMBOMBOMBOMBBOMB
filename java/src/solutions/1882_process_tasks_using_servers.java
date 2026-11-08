@@ -12,13 +12,14 @@ class Solution {
       this.time = 0;
     }
 
+    private static final Comparator<Server> C = Comparator
+        .comparingInt((Server s) -> s.time)
+        .thenComparingInt(s -> s.weight)
+        .thenComparingInt(s -> s.id);
+
     @Override
     public int compareTo(Solution.Server o) {
-
-      return Comparator.comparingInt((Server s) -> s.time)
-          .thenComparingInt(s -> s.weight)
-          .thenComparingInt(s -> s.id)
-          .compare(this, o);
+      return C.compare(this, o);
     }
   }
 
