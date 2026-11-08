@@ -44,11 +44,14 @@ class Solution {
         continue;
       }
 
-      Server s = freeServersPQ.poll();
-      result[idx] = s.id;
-      s.time = seconds + tasks[idx];
-      busyServersPQ.add(s);
-      idx++;
+      while (idx <= seconds && !freeServersPQ.isEmpty() && idx < tasks.length) {
+        Server s = freeServersPQ.poll();
+        result[idx] = s.id;
+        s.time = seconds + tasks[idx];
+        busyServersPQ.add(s);
+        idx++;
+      }
+
       seconds++;
     }
 
