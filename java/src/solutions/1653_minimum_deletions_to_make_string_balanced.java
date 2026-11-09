@@ -1,25 +1,24 @@
 class Solution {
   public int minimumDeletions(String s) {
-    int removeAs = 0;
-    boolean seenB = false;
+    int aRight = 0;
     for (int i = 0; i < s.length(); i++) {
-      seenB = s.charAt(i) == 'b' || seenB;
-
-      if (seenB && s.charAt(i) == 'a') {
-        removeAs++;
+      if (s.charAt(i) == 'a') {
+        aRight += 1;
       }
     }
 
-    int removeBs = 0;
-    boolean seenA = false;
-    for (int i = s.length() -1; i >= 0; i--) {
-      seenA = s.charAt(i) == 'a' || seenA;
-
-      if (seenA && s.charAt(i) == 'b') {
-        removeBs++;
+    int bLeft = 0;
+    int moves = aRight;
+    for (int i = 0; i < s.length(); i++) {
+      if (s.charAt(i) == 'a') {
+        aRight--;
+      } else {
+        bLeft++;
       }
+      moves = Math.min(moves, aRight + bLeft);
     }
 
-    return Math.min(removeAs, removeBs);
+    return moves;
   }
 }
+
