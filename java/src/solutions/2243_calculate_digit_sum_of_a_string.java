@@ -1,17 +1,18 @@
 class Solution {
-  public String digitSum(String s, int k) {
-    if (s.length() <= k) {
-      return s;
-    }
-    StringBuilder output = new StringBuilder();
-    for (int i = 0; i < s.length(); i += k) {
-      var segmentSum = 0;
-      for (int c = i; c < Math.min(i + k, s.length()); c++) {
-        segmentSum += s.charAt(c) - '0';
+  public String digitSum(String s, final int k) {
+    StringBuilder sb = new StringBuilder();
+    while (s.length() > k) {
+      for (int i = 0; i < s.length(); i += k) {
+        var segmentSum = 0;
+        for (int c = i; c < Math.min(i + k, s.length()); c++) {
+          segmentSum += s.charAt(c) - '0';
+        }
+        sb.append(segmentSum);
       }
-      output.append(segmentSum);
+      s = sb.toString();
+      sb.setLength(0);
     }
 
-    return this.digitSum(output.toString(), k);
+    return s;
   }
 }
