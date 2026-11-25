@@ -1,3 +1,8 @@
+enum State {
+    Enter(usize),
+    Exit(usize, Option<usize>),
+}
+
 impl Solution {
     pub fn find_subtree_sizes(parent: Vec<i32>, s: String) -> Vec<i32> {
         let mut adj_list = vec![vec![]; parent.len()];
@@ -8,23 +13,25 @@ impl Solution {
         let bytes = s.as_bytes();
         let mut subtree_count = vec![1; parent.len()];
         let mut last_seen = [None::<usize>; 26];
-        let mut stack = vec![(0_usize, false, None::<usize>)];
-        while let Some((node, is_exiting, previous_matching_ansestor)) = stack.pop() {
-            let ch = bytes[node];
-            let last_seen_idx = (ch - b'a') as usize;
-            if is_exiting {
-                last_seen[last_seen_idx] = previous_matching_ansestor;
-                if node != 0 {
-                    let parent = previous_matching_ansestor.unwrap_or(parent[node] as usize);
-                    subtree_count[parent] += subtree_count[node];
+        let mut stack = vec![State::Enter(0)];
+        while let Some(state) = stack.pop() {
+            match state {
+                State::Enter(node) => {
+                    let last_seen_idx = (bytes[node] - b'a') as usize;
+                    stack.push(State::Exit(node, last_seen[last_seen_idx]));
+                    last_seen[last_seen_idx] = Some(node);
+                    for &child in &adj_list[node] {
+                        stack.push(State::Enter(child));
+                    }
                 }
-                continue;
-            }
-
-            stack.push((node, true, last_seen[last_seen_idx]));
-            last_seen[last_seen_idx] = Some(node);
-            for &child in &adj_list[node] {
-                stack.push((child, false, None));
+                State::Exit(node, prev_ansestor) => {
+                    let last_seen_idx = (bytes[node] - b'a') as usize;
+                    last_seen[last_seen_idx] = prev_ansestor;
+                    if node != 0 {
+                        let parent = prev_ansestor.unwrap_or(parent[node] as usize);
+                        subtree_count[parent] += subtree_count[node];
+                    }
+                }
             }
         }
 
