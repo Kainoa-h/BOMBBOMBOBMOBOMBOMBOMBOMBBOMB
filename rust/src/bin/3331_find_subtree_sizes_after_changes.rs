@@ -1,56 +1,56 @@
 impl Solution {
     pub fn find_subtree_sizes(parent: Vec<i32>, s: String) -> Vec<i32> {
-        let mut adj_list = vec![Vec::<usize>::new(); s.len()];
+        let mut adj_list = vec![vec![]; parent.len()];
         for (c, &p) in parent.iter().enumerate().skip(1) {
             adj_list[p as usize].push(c);
         }
 
-        let letters = s.as_bytes();
-        let mut matching_parent = [None::<usize>; 26];
-        let mut stack = vec![(0, 0)];
-        while let Some(&(node, parent)) = stack.last() {
-            let letter_idx = (letters[node] - b'a') as usize;
-            if let Some(matching) = matching_parent[letter_idx] {
-                if matching == node {
-                    matching_parent[letter_idx] = None;
-                } else {
-                    for &child in &adj_list[node] {
-                        stack.push((child, parent));
-                    }
-                    let idx = adj_list[parent].iter().position(|&x| x == node).unwrap();
-                    adj_list[parent].remove(idx);
-                    let childrens = adj_list[node].clone();
-                    adj_list[parent].extend(childrens);
-                    adj_list[node].clear();
-                    adj_list[matching].push(node);
-                }
-                let _ = stack.pop();
-            } else {
-                matching_parent[letter_idx] = Some(node);
-                for &child in &adj_list[node] {
-                    stack.push((child, node));
-                }
+        let bytes = s.as_bytes();
+        let mut new_parent = parent.clone();
+        let mut last_seen = [None::<usize>; 26];
+        let mut stack = vec![(0_usize, false, None::<usize>)];
+        while let Some((node, is_exiting, previous_matching_ansestor)) = stack.pop() {
+            let ch = bytes[node];
+            let last_seen_idx = (ch - b'a') as usize;
+            if is_exiting {
+                last_seen[last_seen_idx] = previous_matching_ansestor;
+                continue;
+            }
+
+            stack.push((node, true, last_seen[last_seen_idx]));
+            if let Some(p) = last_seen[last_seen_idx] {
+                new_parent[node] = p as i32;
+            }
+            last_seen[last_seen_idx] = Some(node);
+            for &child in &adj_list[node] {
+                stack.push((child, false, None));
             }
         }
 
-        let mut subtree_count = vec![0_i32; s.len()];
-        let mut stack = vec![0_usize];
-        while let Some(&top) = stack.last() {
-            if adj_list[top].is_empty() {
-                subtree_count[top] = 1;
-                let _ = stack.pop();
+        let mut adj_list = vec![vec![]; parent.len()];
+        for (c, &p) in new_parent.iter().enumerate().skip(1) {
+            adj_list[p as usize].push(c);
+        }
+        let mut stack = vec![(0_usize, false)];
+        let mut subtree_count = vec![0; parent.len()];
+        while let Some((node, is_exiting)) = stack.pop() {
+            if is_exiting {
+                subtree_count[node] = 1 + adj_list[node]
+                    .iter().map(|&c| subtree_count[c]).sum::<i32>();
                 continue;
             }
-            if adj_list[top].iter().any(|&c| subtree_count[c] > 0) {
-                subtree_count[top] =
-                    adj_list[top].iter().map(|&c| subtree_count[c]).sum::<i32>() + 1_i32;
-                let _ = stack.pop();
+            
+            if adj_list[node].is_empty() {
+                subtree_count[node] = 1;
                 continue;
             }
-            for &c in &adj_list[top] {
-                stack.push(c);
+            
+            stack.push((node, true));
+            for &child in &adj_list[node] {
+                stack.push((child, false));
             }
         }
+
         subtree_count
     }
 }
